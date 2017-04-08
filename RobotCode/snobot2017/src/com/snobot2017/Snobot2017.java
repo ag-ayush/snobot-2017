@@ -87,8 +87,7 @@ public class Snobot2017 extends ASnobot
         ////////////////////////////////////////////////////////////
 
         // Drive Train
-        boolean useCan = false;
-        if (useCan)
+        if (PortMappings2017.sUSE_CAN_DRIVETRAIN)
         {
             CANTalon driveLeftMotorA = new CANTalon(PortMappings2017.sDRIVE_CAN_LEFT_A_PORT);
             CANTalon driveLeftMotorB = new CANTalon(PortMappings2017.sDRIVE_CAN_LEFT_B_PORT);
