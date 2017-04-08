@@ -58,6 +58,10 @@ public abstract class ASimulator implements ISimulatorUpdater
                     {
                         x.update(sMOTOR_UPDATE_FREQUENCY);
                     }
+                    for (SpeedControllerWrapper x : SensorActuatorRegistry.get().getCanSpeedControllers().values())
+                    {
+                        x.update(sMOTOR_UPDATE_FREQUENCY);
+                    }
                 }
 
                 try

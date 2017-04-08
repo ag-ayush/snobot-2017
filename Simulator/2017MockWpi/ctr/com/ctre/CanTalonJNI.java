@@ -415,7 +415,7 @@ public class CanTalonJNI extends JNIWrapper
 
     public static int GetSensorPosition(long handle)
     {
-        return 0;
+        return GetEncPosition(handle);
     }
 
     public static int GetSensorVelocity(long handle)
@@ -440,6 +440,10 @@ public class CanTalonJNI extends JNIWrapper
         if (wrapper != null)
         {
             return wrapper.getRaw();
+        }
+        else
+        {
+            SensorActuatorRegistry.get().register(new EncoderWrapper(port, -1), port);
         }
 
         return 0;
