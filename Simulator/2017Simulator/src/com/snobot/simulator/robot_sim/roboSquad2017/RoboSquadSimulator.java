@@ -2,10 +2,12 @@ package com.snobot.simulator.robot_sim.roboSquad2017;
 
 import java.util.Map;
 
+import com.kauailabs.navx.frc.AHRSAbstraction;
+import com.kauailabs.navx.frc.NavxRegistry;
 import com.snobot.simulator.ASimulator;
 import com.snobot.simulator.SensorActuatorRegistry;
-import com.snobot.simulator.module_wrapper.AnalogWrapper;
 import com.snobot.simulator.module_wrapper.EncoderWrapper;
+import com.snobot.simulator.module_wrapper.GyroWrapper;
 import com.snobot.simulator.module_wrapper.SolenoidWrapper;
 import com.snobot.simulator.module_wrapper.SpeedControllerWrapper;
 import com.snobot.simulator.module_wrapper.TankDriveGyroSimulator;
@@ -124,7 +126,8 @@ public class RoboSquadSimulator extends ASimulator
         SensorActuatorRegistry.get().register(leftEncoder, leftDriveMaster);
         SensorActuatorRegistry.get().register(rightEncoder, rightDriveMaster);
 
-        AnalogWrapper gyroWrapper = SensorActuatorRegistry.get().getAnalog().get(100);
+        AHRSAbstraction navx = NavxRegistry.get().getNavx();
+        GyroWrapper gyroWrapper = navx.getYawWrapper();
         TankDriveGyroSimulator drivetrainSim = new TankDriveGyroSimulator(leftEncoder, rightEncoder, gyroWrapper);
         drivetrainSim.setTurnKp(400 / 12.0);
         mSimulatorComponenets.add(drivetrainSim);

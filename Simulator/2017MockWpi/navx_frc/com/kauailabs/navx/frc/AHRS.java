@@ -4,22 +4,22 @@ import edu.wpi.first.wpilibj.SPI.Port;
 
 public class AHRS
 {
+    private AHRSAbstraction mAbstraction;
 
-    public AHRS(Port kmxp)
+    public AHRS(Port aPort)
     {
-        // TODO Auto-generated constructor stub
+        mAbstraction = new AHRSAbstraction();
+        NavxRegistry.get().registerNavx(aPort, mAbstraction);
     }
 
     public double getYaw()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return mAbstraction.getYaw();
     }
 
     public void reset()
     {
-        // TODO Auto-generated method stub
-
+        mAbstraction.reset();
     }
 
 }

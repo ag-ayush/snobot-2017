@@ -9,7 +9,7 @@ public class TankDriveGyroSimulator implements ISimulatorUpdater
 
     private EncoderWrapper mLeftEncoder;
     private EncoderWrapper mRightEncoder;
-    private AnalogWrapper mGyroPort;
+    private GyroWrapper mGyro;
 
     private double mAngle; // degrees
     private boolean mIsSetup;
@@ -19,13 +19,13 @@ public class TankDriveGyroSimulator implements ISimulatorUpdater
 
     private double mKP;
 
-    public TankDriveGyroSimulator(EncoderWrapper aLeftEncoder, EncoderWrapper aRightEncoder, AnalogWrapper aGyroPort)
+    public TankDriveGyroSimulator(EncoderWrapper aLeftEncoder, EncoderWrapper aRightEncoder, GyroWrapper aGyroPort)
     {
         mLeftEncoder = aLeftEncoder;
         mRightEncoder = aRightEncoder;
-        mGyroPort = aGyroPort;
+        mGyro = aGyroPort;
 
-        mIsSetup = mLeftEncoder != null && mRightEncoder != null && mGyroPort != null;
+        mIsSetup = mLeftEncoder != null && mRightEncoder != null && mGyro != null;
 
         // TODO I have no idea what this black magic number means
         // mKP = 22.0 / 12.0;
@@ -69,7 +69,7 @@ public class TankDriveGyroSimulator implements ISimulatorUpdater
 
             mAngle = (leftDist - rightDist) / (3.14159 * mKP) * (180.0);
 
-            mGyroPort.setAccumulator(mAngle);
+            mGyro.setAngle(mAngle);
             // System.out.println("SIMULATOR : angle=" + mAngle + ", right=" +
             // rightDist + ", left=" + leftDist);
         }

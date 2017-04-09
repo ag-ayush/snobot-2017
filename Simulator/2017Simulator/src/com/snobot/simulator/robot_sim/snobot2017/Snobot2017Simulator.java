@@ -2,8 +2,8 @@ package com.snobot.simulator.robot_sim.snobot2017;
 
 import com.snobot.simulator.ASimulator;
 import com.snobot.simulator.SensorActuatorRegistry;
-import com.snobot.simulator.module_wrapper.AnalogWrapper;
 import com.snobot.simulator.module_wrapper.EncoderWrapper;
+import com.snobot.simulator.module_wrapper.GyroWrapper;
 import com.snobot.simulator.module_wrapper.SpeedControllerWrapper;
 import com.snobot.simulator.module_wrapper.TankDriveGyroSimulator;
 import com.snobot.simulator.motor_sim.DcMotorModel;
@@ -87,7 +87,7 @@ public class Snobot2017Simulator extends ASimulator
             rightEncoder.setSpeedController(rightSC);
         }
 
-        AnalogWrapper gyroWrapper = SensorActuatorRegistry.get().getAnalog().get(100);
+        GyroWrapper gyroWrapper = new GyroWrapper(SensorActuatorRegistry.get().getAnalog().get(100));
         TankDriveGyroSimulator drivetrainSim = new TankDriveGyroSimulator(leftEncoder, rightEncoder, gyroWrapper);
         drivetrainSim.setTurnKp(400 / 12.0);
         mSimulatorComponenets.add(drivetrainSim);

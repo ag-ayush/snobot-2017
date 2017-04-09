@@ -107,7 +107,7 @@ public class HAL extends JNIWrapper
     {
         if (resource == tResourceType.kResourceType_Solenoid)
         {
-            SensorActuatorRegistry.get().getSolenoids().get(instanceNumber).setIsReal(true);
+            SensorActuatorRegistry.get().getSolenoids().get(instanceNumber).setVisible(true);
         }
         else if (resource == tResourceType.kResourceType_Joystick)
         {
