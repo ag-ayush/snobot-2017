@@ -156,7 +156,7 @@ public class HAL extends JNIWrapper
         IMockJoystick joystick = sJOYSTICK_FACTORY.get(joystickNum);
         float[] joystickValue = joystick.getAxisValues();
 
-        for (int i = 0; i < joystickValue.length; ++i)
+        for (int i = 0; i < Math.min(joystickValue.length, kMaxJoystickAxes); ++i)
         {
             axesArray[i] = joystickValue[i];
         }
