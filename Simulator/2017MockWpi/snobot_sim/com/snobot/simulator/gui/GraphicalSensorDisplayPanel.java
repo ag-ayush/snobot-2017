@@ -1,5 +1,9 @@
 package com.snobot.simulator.gui;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
@@ -10,6 +14,7 @@ import com.snobot.simulator.gui.module_widget.EncoderGraphicDisplay;
 import com.snobot.simulator.gui.module_widget.RelayGraphicDisplay;
 import com.snobot.simulator.gui.module_widget.SolenoidGraphicDisplay;
 import com.snobot.simulator.gui.module_widget.SpeedControllerGraphicDisplay;
+import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
 
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
@@ -20,7 +25,7 @@ public class GraphicalSensorDisplayPanel extends JPanel
         create();
     }
 
-    private SpeedControllerGraphicDisplay mSpeedControllerPanel;
+    private com.snobot.simulator.gui.module_widgetHAL.SpeedControllerGraphicDisplay mSpeedControllerPanel;
     private SpeedControllerGraphicDisplay mCanSpeedControllerPanel;
     private SolenoidGraphicDisplay mSolenoidPanel;
     private DigitalSourceGraphicDisplay mDigitalSourcePanel;
@@ -33,7 +38,9 @@ public class GraphicalSensorDisplayPanel extends JPanel
     {
         SensorActuatorRegistry reg = SensorActuatorRegistry.get();
 
-        mSpeedControllerPanel = new SpeedControllerGraphicDisplay(reg.getSpeedControllers(), "Speed Controllers");
+        List<Integer> speedControllers = IntStream.of(SpeedControllerWrapperJni.getPortList()).boxed().collect(Collectors.toList());
+
+        mSpeedControllerPanel = new com.snobot.simulator.gui.module_widgetHAL.SpeedControllerGraphicDisplay(speedControllers, "Speed Controllers");
         mCanSpeedControllerPanel = new SpeedControllerGraphicDisplay(reg.getCanSpeedControllers(), "CAN Speed Controllers");
         mSolenoidPanel = new SolenoidGraphicDisplay(reg.getSolenoids());
         mDigitalSourcePanel = new DigitalSourceGraphicDisplay(reg.getDigitalSources());
@@ -82,7 +89,7 @@ public class GraphicalSensorDisplayPanel extends JPanel
     {
         SensorActuatorRegistry reg = SensorActuatorRegistry.get();
 
-        mSpeedControllerPanel.update(reg.getSpeedControllers());
+        mSpeedControllerPanel.update();
         mCanSpeedControllerPanel.update(reg.getCanSpeedControllers());
         mSolenoidPanel.update(reg.getSolenoids());
         mDigitalSourcePanel.update(reg.getDigitalSources());
