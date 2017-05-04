@@ -27,5 +27,6 @@
 	<classpathentry kind="lib" path="3rdParyLibraries/simple-json/json-simple-1.1.1.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/json-simple-1.1.1.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/RIOdroid.jar"/>
+	<classpathentry kind="lib" path="templibs/ntcore-windows.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

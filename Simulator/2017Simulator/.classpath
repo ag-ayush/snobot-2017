@@ -14,5 +14,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="var" path="wpilib" sourcepath="wpilib.sources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TeachingProject"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
