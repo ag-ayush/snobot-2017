@@ -8,12 +8,15 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import com.snobot.simulator.SensorActuatorRegistry;
-import com.snobot.simulator.gui.module_widget.AnalogOutputDisplay;
-import com.snobot.simulator.gui.module_widget.DigitalSourceGraphicDisplay;
 import com.snobot.simulator.gui.module_widget.EncoderGraphicDisplay;
-import com.snobot.simulator.gui.module_widget.RelayGraphicDisplay;
 import com.snobot.simulator.gui.module_widget.SolenoidGraphicDisplay;
 import com.snobot.simulator.gui.module_widget.SpeedControllerGraphicDisplay;
+import com.snobot.simulator.gui.module_widgetHAL.AnalogOutputDisplay;
+import com.snobot.simulator.gui.module_widgetHAL.DigitalSourceGraphicDisplay;
+import com.snobot.simulator.gui.module_widgetHAL.RelayGraphicDisplay;
+import com.snobot.simulator.module_wrapper.AnalogSourceWrapperJni;
+import com.snobot.simulator.module_wrapper.DigitalSourceWrapperJni;
+import com.snobot.simulator.module_wrapper.RelayWrapperJni;
 import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
 
 @SuppressWarnings(
@@ -39,13 +42,16 @@ public class GraphicalSensorDisplayPanel extends JPanel
         SensorActuatorRegistry reg = SensorActuatorRegistry.get();
 
         List<Integer> speedControllers = IntStream.of(SpeedControllerWrapperJni.getPortList()).boxed().collect(Collectors.toList());
+        List<Integer> digitalSource = IntStream.of(DigitalSourceWrapperJni.getPortList()).boxed().collect(Collectors.toList());
+        List<Integer> relaySource = IntStream.of(RelayWrapperJni.getPortList()).boxed().collect(Collectors.toList());
+        List<Integer> analogSource = IntStream.of(AnalogSourceWrapperJni.getPortList()).boxed().collect(Collectors.toList());
 
         mSpeedControllerPanel = new com.snobot.simulator.gui.module_widgetHAL.SpeedControllerGraphicDisplay(speedControllers, "Speed Controllers");
         mCanSpeedControllerPanel = new SpeedControllerGraphicDisplay(reg.getCanSpeedControllers(), "CAN Speed Controllers");
         mSolenoidPanel = new SolenoidGraphicDisplay(reg.getSolenoids());
-        mDigitalSourcePanel = new DigitalSourceGraphicDisplay(reg.getDigitalSources());
-        mRelayPanel = new RelayGraphicDisplay(reg.getRelays());
-        mAnalogPanel = new AnalogOutputDisplay(reg.getAnalog());
+        mDigitalSourcePanel = new DigitalSourceGraphicDisplay(digitalSource);
+        mRelayPanel = new RelayGraphicDisplay(relaySource);
+        mAnalogPanel = new AnalogOutputDisplay(analogSource);
         mEncoderPanel = new EncoderGraphicDisplay(reg.getEncoders(), "Encoders (Digital Input)");
         mCanEncoderPanel = new EncoderGraphicDisplay(reg.getCanEncoders(), "Encoders (CAN)");
 
@@ -92,9 +98,9 @@ public class GraphicalSensorDisplayPanel extends JPanel
         mSpeedControllerPanel.update();
         mCanSpeedControllerPanel.update(reg.getCanSpeedControllers());
         mSolenoidPanel.update(reg.getSolenoids());
-        mDigitalSourcePanel.update(reg.getDigitalSources());
-        mRelayPanel.update(reg.getRelays());
-        mAnalogPanel.update(reg.getAnalog());
+        mDigitalSourcePanel.update();
+        mRelayPanel.update();
+        mAnalogPanel.update();
         mEncoderPanel.update(reg.getEncoders());
         mCanEncoderPanel.update(reg.getCanEncoders());
 
