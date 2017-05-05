@@ -10,12 +10,10 @@ package edu.wpi.first.wpilibj.hal;
 import java.nio.ByteBuffer;
 
 import com.snobot.simulator.RobotStateSingleton;
-import com.snobot.simulator.SensorActuatorRegistry;
 import com.snobot.simulator.joysticks.IMockJoystick;
 import com.snobot.simulator.joysticks.JoystickFactory;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
 
 /**
  * JNI Wrapper for HAL<br>
@@ -52,25 +50,13 @@ public class HAL extends JNIWrapper
         }
     }
 
-    public static void observeUserProgramDisabled()
-    {
+    public static native void observeUserProgramDisabled();
 
-    }
+    public static native void observeUserProgramAutonomous();
 
-    public static void observeUserProgramAutonomous()
-    {
+    public static native void observeUserProgramTeleop();
 
-    }
-
-    public static void observeUserProgramTeleop()
-    {
-
-    }
-
-    public static void observeUserProgramTest()
-    {
-
-    }
+    public static native void observeUserProgramTest();
 
     public static void report(int resource, int instanceNumber)
     {
@@ -103,18 +89,7 @@ public class HAL extends JNIWrapper
      *            specific resource. Setting the same resource more than once
      *            allows you to change the feature string.
      */
-    public static int report(int resource, int instanceNumber, int context, String feature)
-    {
-        if (resource == tResourceType.kResourceType_Solenoid)
-        {
-            SensorActuatorRegistry.get().getSolenoids().get(instanceNumber).setVisible(true);
-        }
-        else if (resource == tResourceType.kResourceType_Joystick)
-        {
-            JoystickFactory.get().registerJoystickCreated(instanceNumber);
-        }
-        return 0;
-    }
+    public static native int report(int resource, int instanceNumber, int context, String feature);
 
     private static native int nativeGetControlWord();
 
@@ -195,51 +170,27 @@ public class HAL extends JNIWrapper
         return 0;
     }
 
-    public static int getJoystickIsXbox(byte joystickNum)
-    {
-        return 0;
-    }
+    public static native int getJoystickIsXbox(byte joystickNum);
 
-    public static int getJoystickType(byte joystickNum)
-    {
-        return 0;
-    }
+    public static native int getJoystickType(byte joystickNum);
 
-    public static String getJoystickName(byte joystickNum)
-    {
-        return "Joystick " + joystickNum;
-    }
+    public static native String getJoystickName(byte joystickNum);
 
-    public static int getJoystickAxisType(byte joystickNum, byte axis)
-    {
-        return 0;
-    }
+    public static native int getJoystickAxisType(byte joystickNum, byte axis);
 
     public static double getMatchTime()
     {
         return sMatchTime;
     }
 
-    public static boolean getSystemActive()
-    {
-        return false;
-    }
+    public static native boolean getSystemActive();
 
-    public static boolean getBrownedOut()
-    {
-        return false;
-    }
+    public static native boolean getBrownedOut();
 
-    public static int setErrorData(String error)
-    {
-        return 0;
-    }
+    public static native int setErrorData(String error);
 
-    public static int sendError(boolean isError, int errorCode, boolean isLVCode, String details, String location, String callStack, boolean printMsg)
-    {
-        System.err.println("HAL::" + details);
-        return 0;
-    }
+    public static native int sendError(boolean isError, int errorCode, boolean isLVCode, String details, String location, String callStack,
+            boolean printMsg);
 
     // **************************************************
     // Our stuff

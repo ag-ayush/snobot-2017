@@ -10,17 +10,12 @@ package edu.wpi.first.wpilibj.hal;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 
-import com.snobot.simulator.SensorActuatorRegistry;
-import com.snobot.simulator.module_wrapper.AnalogSpiWrapper;
-import com.snobot.simulator.module_wrapper.AnalogWrapper;
-
 @SuppressWarnings("AbbreviationAsWordInName")
 public class SPIJNI extends JNIWrapper
 {
     public static void spiInitialize(byte port)
     {
-        int conv_port = port + 100;
-        SensorActuatorRegistry.get().register(new AnalogSpiWrapper(conv_port), conv_port);
+
     }
 
     public static int spiTransaction(byte port, ByteBuffer dataToSend, ByteBuffer dataReceived, byte size)
@@ -82,8 +77,8 @@ public class SPIJNI extends JNIWrapper
 
     public static void spiResetAccumulator(byte port)
     {
-        AnalogWrapper wrapper = getWrapper(port);
-        wrapper.setAccumulator(0);
+        // AnalogWrapper wrapper = getWrapper(port);
+        // wrapper.setAccumulator(0);
     }
 
     public static void spiSetAccumulatorCenter(byte port, int center)
@@ -103,14 +98,16 @@ public class SPIJNI extends JNIWrapper
 
     public static long spiGetAccumulatorValue(byte port)
     {
-        AnalogWrapper wrapper = getWrapper(port);
+        // AnalogWrapper wrapper = getWrapper(port);
+        //
+        // double accum = wrapper.getAccumulator();
+        //
+        // accum = accum / 0.0125;
+        // accum = accum / 0.001;
+        //
+        // return (long) accum;
 
-        double accum = wrapper.getAccumulator();
-
-        accum = accum / 0.0125;
-        accum = accum / 0.001;
-
-        return (long) accum;
+        return 0;
     }
 
     public static int spiGetAccumulatorCount(byte port)
@@ -125,16 +122,5 @@ public class SPIJNI extends JNIWrapper
 
     public static void spiGetAccumulatorOutput(byte port, LongBuffer value, LongBuffer count)
     {
-    }
-
-    //////////////////////////////////////////////////
-    // Our stuff
-    //////////////////////////////////////////////////
-    private static AnalogWrapper getWrapper(byte port)
-    {
-        int conv_port = port + 100;
-        AnalogWrapper wrapper = SensorActuatorRegistry.get().getAnalog().get(conv_port);
-
-        return wrapper;
     }
 }

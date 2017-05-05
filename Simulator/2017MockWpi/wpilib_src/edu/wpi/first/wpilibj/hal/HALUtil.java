@@ -19,48 +19,26 @@ public class HALUtil extends JNIWrapper
     public static final int NO_AVAILABLE_RESOURCES = -104;
     public static final int PARAMETER_OUT_OF_RANGE = -1028;
 
-    public static short getFPGAVersion()
-    {
-        return 0;
-    }
+    public static native short getFPGAVersion();
 
-    public static int getFPGARevision()
-    {
-        return 0;
-    }
+    public static native int getFPGARevision();
 
     public static long getFPGATime()
     {
         return (long) (HAL.getMatchTime() * 1e6);
     }
 
-    public static int getHALRuntimeType()
-    {
-        return 0;
-    }
+    public static native int getHALRuntimeType();
 
-    public static boolean getFPGAButton()
-    {
-        return false;
-    }
+    public static native boolean getFPGAButton();
 
-    public static String getHALErrorMessage(int code)
-    {
-        return "";
-    }
+    public static native String getHALErrorMessage(int code);
 
-    public static int getHALErrno()
-    {
-        return 0;
-    }
+    public static native int getHALErrno();
 
-    public static String getHALstrerror(int errno)
-    {
-        return "";
-    }
+    public static native String getHALstrerror(int errno);
 
-    public static String getHALstrerror()
-    {
-        return getHALstrerror(getHALErrno());
+    public static String getHALstrerror() {
+      return getHALstrerror(getHALErrno());
     }
 }

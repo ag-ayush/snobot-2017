@@ -3,7 +3,7 @@ package com.snobot.simulator;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.snobot.simulator.module_wrapper.SpeedControllerWrapper;
+import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
 
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -54,14 +54,7 @@ public abstract class ASimulator implements ISimulatorUpdater
             {
                 synchronized (sUPDATE_MUTEX)
                 {
-                    for (SpeedControllerWrapper x : SensorActuatorRegistry.get().getSpeedControllers().values())
-                    {
-                        x.update(sMOTOR_UPDATE_FREQUENCY);
-                    }
-                    for (SpeedControllerWrapper x : SensorActuatorRegistry.get().getCanSpeedControllers().values())
-                    {
-                        x.update(sMOTOR_UPDATE_FREQUENCY);
-                    }
+                    SpeedControllerWrapperJni.updateAllSpeedControllers(sMOTOR_UPDATE_FREQUENCY);
                 }
 
                 try

@@ -1,66 +1,78 @@
 package com.snobot.simulator.gui.module_widget;
 
 import java.text.DecimalFormat;
-import java.util.Map;
+import java.util.Collection;
 import java.util.Map.Entry;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
-import com.snobot.simulator.module_wrapper.EncoderWrapper;
+import com.snobot.simulator.module_wrapper.EncoderWrapperJni;
 
-public class EncoderGraphicDisplay<T> extends BaseWidgetDisplay<T, EncoderWrapper>
+public class EncoderGraphicDisplay extends BaseWidgetDisplay<Integer, EncoderWrapperDisplay>
 {
-    private class EncoderWrapperDisplay extends JPanel
+
+    public EncoderGraphicDisplay(Collection<Integer> aKeys, String aString)
     {
-
-        private JTextField mRawField;
-        private JTextField mDistanceField;
-
-        public EncoderWrapperDisplay()
-        {
-            mRawField = new JTextField(6);
-            mDistanceField = new JTextField(6);
-            add(mRawField);
-            add(mDistanceField);
-        }
-
-        public void updateDisplay(EncoderWrapper aValue)
-        {
-            if (aValue.isHookedUp())
-            {
-                DecimalFormat df = new DecimalFormat("#.###");
-                mRawField.setText("" + aValue.getRaw());
-                mDistanceField.setText(df.format(aValue.getDistance()));
-            }
-            else
-            {
-                mRawField.setText("Not Hooked Up");
-                mDistanceField.setText("Not Hooked Up");
-            }
-        }
-    }
-
-    public EncoderGraphicDisplay(Map<T, EncoderWrapper> map, String aString)
-    {
-        super(map);
+        super(aKeys);
         setBorder(new TitledBorder(aString));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void update(Map<T, EncoderWrapper> aMap)
+    public void update()
     {
-        for (Entry<T, EncoderWrapper> pair : aMap.entrySet())
+        for (Entry<Integer, EncoderWrapperDisplay> pair : mWidgetMap.entrySet())
         {
-            ((EncoderWrapperDisplay) mWidgetMap.get(pair.getKey())).updateDisplay(pair.getValue());
+            int key = pair.getKey();
+            boolean isConnected = EncoderWrapperJni.isHookedUp(key);
+            double raw = EncoderWrapperJni.getRaw(key);
+            double distance = EncoderWrapperJni.getDistance(key);
+
+            pair.getValue().updateDisplay(isConnected, raw, distance);
         }
     }
 
     @Override
-    protected EncoderWrapperDisplay createWidget(Entry<T, EncoderWrapper> pair)
+    protected EncoderWrapperDisplay createWidget(Integer pair)
     {
         return new EncoderWrapperDisplay();
+    }
+
+    @Override
+    protected String getName(Integer aKey)
+    {
+        return EncoderWrapperJni.getName(aKey);
+    }
+}
+
+class EncoderWrapperDisplay extends JPanel
+{
+
+    private JTextField mRawField;
+    private JTextField mDistanceField;
+
+    public EncoderWrapperDisplay()
+    {
+        mRawField = new JTextField(6);
+        mDistanceField = new JTextField(6);
+        add(mRawField);
+        add(mDistanceField);
+    }
+
+    public void updateDisplay(boolean aHasConnection, double aRaw, double aDistance)
+    {
+        if (aHasConnection)
+        {
+            DecimalFormat df = new DecimalFormat("#.###");
+            mRawField.setText("" + aRaw);
+            mDistanceField.setText(df.format(aDistance));
+        }
+        else
+        {
+            mRawField.setText("Not Hooked Up");
+            mDistanceField.setText("Not Hooked Up");
+        }
     }
 }

@@ -2,60 +2,68 @@ package com.snobot.simulator.gui.module_widget;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Map;
+import java.util.Collection;
 import java.util.Map.Entry;
 
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 import com.snobot.simulator.gui.Util;
-import com.snobot.simulator.module_wrapper.SpeedControllerWrapper;
+import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
 
-public class SpeedControllerGraphicDisplay extends BaseWidgetDisplay<Integer, SpeedControllerWrapper>
+public class SpeedControllerGraphicDisplay extends BaseWidgetDisplay<Integer, MotorDisplay>
 {
-    private class MotorDisplay extends JPanel
+
+    public SpeedControllerGraphicDisplay(Collection<Integer> aKeys)
     {
-        private static final int sDOT_SIZE = 30;
-
-        private double mMotorSpeed;
-
-        public MotorDisplay()
-        {
-            setPreferredSize(new Dimension(sDOT_SIZE, sDOT_SIZE));
-        }
-
-        public void updateDisplay(double aValue)
-        {
-            mMotorSpeed = aValue;
-        }
-
-        @Override
-        public void paint(Graphics g)
-        {
-            g.clearRect(0, 0, getWidth(), getHeight());
-            g.setColor(Util.getMotorColor(mMotorSpeed));
-            g.fillOval(0, 0, sDOT_SIZE, sDOT_SIZE);
-        }
-    }
-
-    public SpeedControllerGraphicDisplay(Map<Integer, SpeedControllerWrapper> aMap, String aName)
-    {
-        super(aMap);
-        setBorder(new TitledBorder(aName));
+        super(aKeys);
+        setBorder(new TitledBorder("Speed Controllers"));
     }
 
     @Override
-    public void update(Map<Integer, SpeedControllerWrapper> aMap)
+    public void update()
     {
-        for (Entry<Integer, SpeedControllerWrapper> pair : aMap.entrySet())
+        for (Entry<Integer, MotorDisplay> pair : mWidgetMap.entrySet())
         {
-            ((MotorDisplay) mWidgetMap.get(pair.getKey())).updateDisplay(pair.getValue().get());
+            double value = SpeedControllerWrapperJni.getVoltagePercentage(pair.getKey());
+            pair.getValue().updateDisplay(value);
         }
     }
 
     @Override
-    protected MotorDisplay createWidget(Entry<Integer, SpeedControllerWrapper> pair)
+    protected MotorDisplay createWidget(Integer aKey)
     {
         return new MotorDisplay();
+    }
+
+    @Override
+    protected String getName(Integer aKey)
+    {
+        return SpeedControllerWrapperJni.getName(aKey);
+    }
+}
+
+class MotorDisplay extends JPanel
+{
+    private static final int sDOT_SIZE = 30;
+
+    private double mMotorSpeed;
+
+    public MotorDisplay()
+    {
+        setPreferredSize(new Dimension(sDOT_SIZE, sDOT_SIZE));
+    }
+
+    public void updateDisplay(double aValue)
+    {
+        mMotorSpeed = aValue;
+    }
+
+    @Override
+    public void paint(Graphics g)
+    {
+        g.clearRect(0, 0, getWidth(), getHeight());
+        g.setColor(Util.getMotorColor(mMotorSpeed));
+        g.fillOval(0, 0, sDOT_SIZE, sDOT_SIZE);
     }
 }
