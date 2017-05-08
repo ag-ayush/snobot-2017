@@ -39,6 +39,7 @@ public class RobotStateSingleton
 
     public void updateLoopListeners()
     {
+        SimulationConnectorJni.updateLoop();
         for (LoopListener listener : mListeners)
         {
             listener.looped();

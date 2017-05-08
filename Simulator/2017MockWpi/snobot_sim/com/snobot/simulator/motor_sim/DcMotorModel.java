@@ -10,7 +10,7 @@ public class DcMotorModel
     public final double FREE_CURRENT;
     public final double STALL_TORQUE;
     public final double STALL_CURRENT;
-    
+
     // Indicates the motor has a brake, i.e. when givin 0 volts it will stay put
     public boolean mHasBrake;
 
@@ -53,7 +53,7 @@ public class DcMotorModel
         FREE_CURRENT = aFreeCurrent;
         STALL_TORQUE = aStallTorque;
         STALL_CURRENT = aStallCurrent;
-        
+
         mHasBrake = aHasBrake;
         mInverted = aInverted;
 

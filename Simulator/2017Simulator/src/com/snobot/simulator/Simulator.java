@@ -21,6 +21,7 @@ public class Simulator
 
     private String mClassName; // The name of the class that should be instantiated
     private String mSimulatorClassName; // The name of the class that represents the simulator
+    private String mSimulatorConfig;
 
     private RobotBase mRobot; // The robot code to run
     private ASimulator mSimulator; // The robot code to run
@@ -50,6 +51,7 @@ public class Simulator
 
             mClassName = p.getProperty("robot_class");
             mSimulatorClassName = p.getProperty("simulator_class");
+            mSimulatorConfig = p.getProperty("simulator_config");
             NetworkTable.setPersistentFilename(sUSER_CONFIG_DIR + mClassName + ".preferences.ini");
         }
         catch (Exception e)
@@ -125,7 +127,7 @@ public class Simulator
 
                     if (mSimulator != null)
                     {
-                        mSimulator.createSimulatorComponents();
+                        mSimulator.createSimulatorComponents(mSimulatorConfig);
                         mSimulator.setRobot(mRobot);
                         System.out.println("Created simulator : " + mSimulatorClassName);
 

@@ -1,0 +1,19 @@
+!!com.snobot.simulator.SimulatorConfig
+
+quad_encoders:
+- &idLeftEncoder  { name: Left Encoder,  handleAPort: 4, handleBPort: 5, speedControllerPort: 4 } 
+- &idRightEncoder { name: Right Encoder, handleAPort: 1, handleBPort: 2, speedControllerPort: 1 } 
+
+speed_contollers:
+- { handlePort: 4, name: Left Motor}
+- { handlePort: 1, name: Right Motor}
+
+tank_drive_simulator:
+- left_encoder  : *idLeftEncoder
+  right_encoder : *idRightEncoder
+  gyro_wrapper  : { handlePort: 0}
+  turnKp        : 10
+- left_encoder  : *idLeftEncoder
+  right_encoder : *idRightEncoder
+  gyro_wrapper  : { handlePort: 100}
+  turnKp        : 10

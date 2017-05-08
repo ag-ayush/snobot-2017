@@ -31,8 +31,12 @@ public class AnalogOutputDisplay extends BaseWidgetDisplay<Integer, AnalogDispla
     }
 
     @Override
-    protected AnalogDisplay createWidget(Integer key)
+    protected AnalogDisplay createWidget(Integer aKey)
     {
+        if (AnalogSourceWrapperJni.getWantsHidden(aKey))
+        {
+            return null;
+        }
         return new AnalogDisplay();
     }
 
