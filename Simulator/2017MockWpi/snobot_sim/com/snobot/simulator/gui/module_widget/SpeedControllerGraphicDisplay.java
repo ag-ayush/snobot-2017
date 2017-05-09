@@ -5,7 +5,9 @@ import java.awt.Graphics;
 import java.util.Collection;
 import java.util.Map.Entry;
 
+import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import com.snobot.simulator.gui.Util;
@@ -34,6 +36,18 @@ public class SpeedControllerGraphicDisplay extends BaseWidgetDisplay<Integer, Mo
     protected MotorDisplay createWidget(Integer aKey)
     {
         return new MotorDisplay();
+    }
+
+    @Override
+    protected JDialog createSettingsDialog(Integer aKey)
+    {
+        JDialog dialog = new JDialog();
+
+        dialog.setTitle("Speed Controller " + aKey + " Settings");
+        dialog.getContentPane().add(new JTextField(getName(aKey)));
+        dialog.pack();
+
+        return dialog;
     }
 
     @Override

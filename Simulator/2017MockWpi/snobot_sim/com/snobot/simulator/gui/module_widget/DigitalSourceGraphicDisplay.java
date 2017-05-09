@@ -6,7 +6,9 @@ import java.awt.Graphics;
 import java.util.Collection;
 import java.util.Map.Entry;
 
+import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import com.snobot.simulator.module_wrapper.DigitalSourceWrapperJni;
@@ -38,6 +40,18 @@ public class DigitalSourceGraphicDisplay extends BaseWidgetDisplay<Integer, Digi
             return null;
         }
         return new DigitalSourceWrapperDisplay();
+    }
+
+    @Override
+    protected JDialog createSettingsDialog(Integer aKey)
+    {
+        JDialog dialog = new JDialog();
+
+        dialog.setTitle("Digital " + aKey + " Settings");
+        dialog.getContentPane().add(new JTextField(getName(aKey)));
+        dialog.pack();
+
+        return dialog;
     }
 
     @Override

@@ -89,4 +89,15 @@ public class GraphicalSensorDisplayPanel extends JPanel
 
         repaint();
     }
+
+    public void showSettingsButtons(boolean aShow)
+    {
+
+        mSpeedControllerPanel.showSettingsButtons(aShow);
+        mSolenoidPanel.showSettingsButtons(aShow);
+        mDigitalSourcePanel.showSettingsButtons(aShow);
+        mRelayPanel.showSettingsButtons(aShow);
+        mAnalogPanel.showSettingsButtons(aShow);
+        mEncoderPanel.showSettingsButtons(aShow);
+    }
 }

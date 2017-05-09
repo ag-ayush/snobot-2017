@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import com.snobot.simulator.RobotStateSingleton;
 import com.snobot.simulator.gui.joysticks.JoystickManagerDialog;
@@ -17,7 +18,6 @@ public class SimulatorFrame extends JFrame
 
     private GraphicalSensorDisplayPanel mBasicPanel;
     private EnablePanel mEnablePanel;
-    private JButton mConfigureJoysticksBtn;
 
     public SimulatorFrame()
     {
@@ -40,7 +40,6 @@ public class SimulatorFrame extends JFrame
     {
         mBasicPanel = new GraphicalSensorDisplayPanel();
         mEnablePanel = new EnablePanel();
-        mConfigureJoysticksBtn = new JButton("Configure Joysticks");
 
         mEnablePanel.addStateChangedListener(new ActionListener()
         {
@@ -53,7 +52,8 @@ public class SimulatorFrame extends JFrame
             }
         });
 
-        mConfigureJoysticksBtn.addActionListener(new ActionListener()
+        JButton configureJoystickBtn = new JButton("Configure Joysticks");
+        configureJoystickBtn.addActionListener(new ActionListener()
         {
 
             @Override
@@ -63,9 +63,47 @@ public class SimulatorFrame extends JFrame
             }
         });
 
+        JButton changeSettingsBtn = new JButton("Change Settings");
+        JButton hideSettingsBtn = new JButton("Save Settings");
+
+        changeSettingsBtn.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                changeSettingsBtn.setVisible(false);
+                hideSettingsBtn.setVisible(true);
+
+                showSettingsOptions(true);
+            }
+        });
+
+        hideSettingsBtn.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                changeSettingsBtn.setVisible(true);
+                hideSettingsBtn.setVisible(false);
+
+                showSettingsOptions(false);
+            }
+        });
+        hideSettingsBtn.setVisible(false);
+
+        JPanel settingsPanel = new JPanel(new BorderLayout());
+        settingsPanel.add(changeSettingsBtn, BorderLayout.NORTH);
+        settingsPanel.add(hideSettingsBtn, BorderLayout.SOUTH);
+
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        buttonPanel.add(configureJoystickBtn, BorderLayout.NORTH);
+        buttonPanel.add(settingsPanel, BorderLayout.SOUTH);
+
         add(mBasicPanel, BorderLayout.CENTER);
         add(mEnablePanel, BorderLayout.NORTH);
-        add(mConfigureJoysticksBtn, BorderLayout.SOUTH);
+        add(buttonPanel, BorderLayout.SOUTH);
 
         RobotStateSingleton.get().setDisabled(false);
         RobotStateSingleton.get().setAutonomous(false);
@@ -79,5 +117,11 @@ public class SimulatorFrame extends JFrame
         JoystickManagerDialog dialog = new JoystickManagerDialog();
         dialog.setModal(true);
         dialog.setVisible(true);
+    }
+
+    private void showSettingsOptions(boolean aShow)
+    {
+        mBasicPanel.showSettingsButtons(aShow);
+        pack();
     }
 }

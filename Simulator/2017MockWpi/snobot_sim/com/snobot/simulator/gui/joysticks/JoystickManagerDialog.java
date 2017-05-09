@@ -1,6 +1,9 @@
 package com.snobot.simulator.gui.joysticks;
 
 import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,36 +26,11 @@ public class JoystickManagerDialog extends JDialog
     public JoystickManagerDialog()
     {
         setTitle("Joystick Manager");
-        mIsOpen = true;
+        mIsOpen = false;
+
+        addWindowListener(mCloseListener);
 
         initComponents();
-
-        Thread t = new Thread(new Runnable()
-        {
-
-            @Override
-            public void run()
-            {
-                while (mIsOpen)
-                {
-                    for (JoystickTabPanel panel : mJoystickPanels.values())
-                    {
-                        panel.update();
-                    }
-
-                    try
-                    {
-                        Thread.sleep(sUPDATE_TIME);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        t.setName("Joystick Updater");
-        t.start();
     }
 
     private void initComponents()
@@ -97,8 +75,53 @@ public class JoystickManagerDialog extends JDialog
         add(tabbedPane, BorderLayout.CENTER);
     }
 
+    public void setVisible(boolean aVisible)
+    {
+        if (aVisible && !mIsOpen)
+        {
+            mIsOpen = true;
+
+            Thread t = new Thread(new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    while (mIsOpen)
+                    {
+                        for (JoystickTabPanel panel : mJoystickPanels.values())
+                        {
+                            panel.update();
+                        }
+
+                        try
+                        {
+                            Thread.sleep(sUPDATE_TIME);
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            t.setName("Joystick Updater");
+            t.start();
+        }
+        super.setVisible(aVisible);
+    }
+
     public void close()
     {
         mIsOpen = false;
     }
+
+    private WindowListener mCloseListener = new WindowAdapter()
+    {
+        @Override
+        public void windowClosing(WindowEvent e)
+        {
+            close();
+        }
+    };
 }

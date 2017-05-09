@@ -2,13 +2,19 @@ package com.snobot.simulator.gui.module_widget;
 
 import java.text.DecimalFormat;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import com.snobot.simulator.module_wrapper.EncoderWrapperJni;
+import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
 
 public class EncoderGraphicDisplay extends BaseWidgetDisplay<Integer, EncoderWrapperDisplay>
 {
@@ -38,6 +44,45 @@ public class EncoderGraphicDisplay extends BaseWidgetDisplay<Integer, EncoderWra
     protected EncoderWrapperDisplay createWidget(Integer pair)
     {
         return new EncoderWrapperDisplay();
+    }
+
+    @Override
+    protected JDialog createSettingsDialog(Integer aKey)
+    {
+        JDialog dialog = new JDialog();
+
+        class SpeedControllerOption
+        {
+            int mHandle;
+            String mName;
+
+            public SpeedControllerOption(int aHandle, String aName)
+            {
+                mHandle = aHandle;
+                mName = aName;
+            }
+
+            @Override
+            public String toString()
+            {
+                return mName + "(" + mHandle + ")";
+            }
+        }
+
+        JComboBox<SpeedControllerOption> speedControllerSelector = new JComboBox<>();
+
+        List<Integer> speedControllers = IntStream.of(SpeedControllerWrapperJni.getPortList()).boxed().collect(Collectors.toList());
+        for (int handle : speedControllers)
+        {
+            speedControllerSelector.addItem(new SpeedControllerOption(handle, SpeedControllerWrapperJni.getName(handle)));
+        }
+
+        dialog.setTitle("Encoder " + aKey + " Settings");
+        dialog.getContentPane().add(new JTextField(getName(aKey)));
+        dialog.getContentPane().add(speedControllerSelector);
+        dialog.pack();
+
+        return dialog;
     }
 
     @Override

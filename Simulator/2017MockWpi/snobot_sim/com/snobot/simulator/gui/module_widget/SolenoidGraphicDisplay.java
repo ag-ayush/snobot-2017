@@ -5,7 +5,9 @@ import java.awt.Graphics;
 import java.util.Collection;
 import java.util.Map.Entry;
 
+import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import com.snobot.simulator.module_wrapper.SolenoidWrapperJni;
@@ -36,6 +38,18 @@ public class SolenoidGraphicDisplay extends BaseWidgetDisplay<Integer, SolenoidD
     protected SolenoidDisplay createWidget(Integer aKey)
     {
         return new SolenoidDisplay();
+    }
+
+    @Override
+    protected JDialog createSettingsDialog(Integer aKey)
+    {
+        JDialog dialog = new JDialog();
+
+        dialog.setTitle("Solenoid " + aKey + " Settings");
+        dialog.getContentPane().add(new JTextField(getName(aKey)));
+        dialog.pack();
+
+        return dialog;
     }
 
     @Override
