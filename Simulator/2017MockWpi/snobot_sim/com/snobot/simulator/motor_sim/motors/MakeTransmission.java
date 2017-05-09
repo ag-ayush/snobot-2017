@@ -1,12 +1,12 @@
 package com.snobot.simulator.motor_sim.motors;
 
-import com.snobot.simulator.motor_sim.DcMotorModel;
+import com.snobot.simulator.motor_sim.DcMotorModelConfig;
 
 public class MakeTransmission
 {
-    public static DcMotorModel makeTransmission(DcMotorModel motor, int num_motors, double gear_reduction, double efficiency)
+    public static DcMotorModelConfig makeTransmission(DcMotorModelConfig motor, int num_motors, double gear_reduction, double efficiency)
     {
-        DcMotorModel output = new DcMotorModel(
+        DcMotorModelConfig output = new DcMotorModelConfig(
                 motor.NOMINAL_VOLTAGE,
                 motor.FREE_SPEED_RPM / gear_reduction,
                 motor.FREE_CURRENT  * num_motors,

@@ -10,10 +10,6 @@ package edu.wpi.first.wpilibj.hal;
 import java.nio.ByteBuffer;
 
 import com.snobot.simulator.RobotStateSingleton;
-import com.snobot.simulator.joysticks.IMockJoystick;
-import com.snobot.simulator.joysticks.JoystickFactory;
-
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * JNI Wrapper for HAL<br>
@@ -25,29 +21,14 @@ public class HAL extends JNIWrapper
 {
     public static void waitForDSData()
     {
-        Timer.delay(sWaitTime);
-        sMatchTime += sCYCLE_TIME;
-
-        synchronized (sPROGRAM_STARTED_LOCK)
-        {
-            RobotStateSingleton.get().updateLoopListeners();
-        }
+        RobotStateSingleton.get().waitForDSData();
     }
 
-    public static int initialize(int mode)
-    {
-        return 1;
-    }
+    public static native int initialize(int mode);
 
     public static void observeUserProgramStarting()
     {
-        synchronized (sPROGRAM_STARTED_LOCK)
-        {
-            System.out.println("Robot Initialized");
-            System.out.println("\n\n");
-            sPROGRAM_STARTED_LOCK.notify();
-            sROBOT_STARTED = true;
-        }
+        RobotStateSingleton.get().robotInitialized();
     }
 
     public static native void observeUserProgramDisabled();
@@ -96,7 +77,9 @@ public class HAL extends JNIWrapper
     @SuppressWarnings("JavadocMethod")
     public static void getControlWord(ControlWord controlWord)
     {
-        sROBOT_STATE.updateControlWord(controlWord);
+        int word = nativeGetControlWord();
+        controlWord.update((word & 1) != 0, ((word >> 1) & 1) != 0, ((word >> 2) & 1) != 0, ((word >> 3) & 1) != 0, ((word >> 4) & 1) != 0,
+                ((word >> 5) & 1) != 0);
     }
 
     private static native int nativeGetAllianceStation();
@@ -126,49 +109,13 @@ public class HAL extends JNIWrapper
     public static int kMaxJoystickAxes = 12;
     public static int kMaxJoystickPOVs = 12;
 
-    public static short getJoystickAxes(byte joystickNum, float[] axesArray)
-    {
-        IMockJoystick joystick = sJOYSTICK_FACTORY.get(joystickNum);
-        float[] joystickValue = joystick.getAxisValues();
+    public static native short getJoystickAxes(byte joystickNum, float[] axesArray);
 
-        for (int i = 0; i < Math.min(joystickValue.length, kMaxJoystickAxes); ++i)
-        {
-            axesArray[i] = joystickValue[i];
-        }
+    public static native short getJoystickPOVs(byte joystickNum, short[] povsArray);
 
-        return (short) joystickValue.length;
-    }
+    public static native int getJoystickButtons(byte joystickNum, ByteBuffer count);
 
-    public static short getJoystickPOVs(byte joystickNum, short[] povsArray)
-    {
-        IMockJoystick joystick = sJOYSTICK_FACTORY.get(joystickNum);
-        short[] joystickValue = joystick.getPovValues();
-
-        for (int i = 0; i < joystickValue.length; ++i)
-        {
-            povsArray[i] = joystickValue[i];
-        }
-
-        return (short) joystickValue.length;
-    }
-
-    public static int getJoystickButtons(byte joystickNum, ByteBuffer count)
-    {
-        int num_buttons = sJOYSTICK_FACTORY.get(joystickNum).getButtonCount();
-        int masked_values = sJOYSTICK_FACTORY.get(joystickNum).getButtonMask();
-
-        count.clear();
-        count.put((byte) num_buttons);
-        count.position(0);
-
-        return masked_values;
-    }
-
-    public static int setJoystickOutputs(byte joystickNum, int outputs, short leftRumble, short rightRumble)
-    {
-        sJOYSTICK_FACTORY.get(joystickNum).setRumble(leftRumble);
-        return 0;
-    }
+    public static native int setJoystickOutputs(byte joystickNum, int outputs, short leftRumble, short rightRumble);
 
     public static native int getJoystickIsXbox(byte joystickNum);
 
@@ -178,10 +125,7 @@ public class HAL extends JNIWrapper
 
     public static native int getJoystickAxisType(byte joystickNum, byte axis);
 
-    public static double getMatchTime()
-    {
-        return sMatchTime;
-    }
+    public static native double getMatchTime();
 
     public static native boolean getSystemActive();
 
@@ -191,61 +135,4 @@ public class HAL extends JNIWrapper
 
     public static native int sendError(boolean isError, int errorCode, boolean isLVCode, String details, String location, String callStack,
             boolean printMsg);
-
-    // **************************************************
-    // Our stuff
-    // **************************************************
-    private static final RobotStateSingleton sROBOT_STATE = RobotStateSingleton.get();
-    private static final JoystickFactory sJOYSTICK_FACTORY = JoystickFactory.get();
-    private static final Object sPROGRAM_STARTED_LOCK = new Object();
-    private static boolean sROBOT_STARTED = false;
-
-    private static final double sCYCLE_TIME = .02; // The period that the main
-                                                   // loop should be run at
-
-    private static double sWaitTime = .02; // The time to sleep. You can run
-                                           // simulations faster/slower by
-                                           // changing this. For example,
-                                           // making the wait time 1 second,
-                                           // means one 20ms cycle will happen
-                                           // each second, 50x slower than
-                                           // normal. Or, you could make it
-                                           // .002, which would make the code
-                                           // execute at 10x speed
-
-    private static double sMatchTime = 0;
-
-    public static void setWaitTime(double aTime)
-    {
-        sWaitTime = aTime;
-    }
-
-    public static double getCycleTime()
-    {
-        return sCYCLE_TIME;
-    }
-
-    public static void waitForProgramStart()
-    {
-        if (!sROBOT_STARTED)
-        {
-            synchronized (sPROGRAM_STARTED_LOCK)
-            {
-                try
-                {
-                    System.out.println("Waiting for robot to initialize...");
-                    sPROGRAM_STARTED_LOCK.wait();
-                }
-                catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-        else
-        {
-            System.out.println("Robot already initialized!");
-        }
-
-    }
 }

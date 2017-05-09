@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.snobot.simulator.RobotStateSingleton;
+import com.snobot.simulator.RobotStateSingletonJni;
 import com.snobot.simulator.gui.joysticks.JoystickManagerDialog;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -47,8 +48,8 @@ public class SimulatorFrame extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                RobotStateSingleton.get().setDisabled(!mEnablePanel.isEnabled());
-                RobotStateSingleton.get().setAutonomous(mEnablePanel.isAuton());
+                RobotStateSingletonJni.setDisabled(!mEnablePanel.isEnabled());
+                RobotStateSingletonJni.setAutonomous(mEnablePanel.isAuton());
             }
         });
 
@@ -105,11 +106,11 @@ public class SimulatorFrame extends JFrame
         add(mEnablePanel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        RobotStateSingleton.get().setDisabled(false);
-        RobotStateSingleton.get().setAutonomous(false);
+        RobotStateSingletonJni.setDisabled(false);
+        RobotStateSingletonJni.setAutonomous(false);
 
         mEnablePanel.setRobotEnabled(true);
-        RobotStateSingleton.get().setDisabled(false);
+        RobotStateSingletonJni.setDisabled(false);
     }
 
     private void showJoystickDialog()

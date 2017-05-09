@@ -2,8 +2,10 @@ package com.snobot.simulator;
 
 import java.util.ArrayList;
 
-import edu.wpi.first.wpilibj.hal.ControlWord;
-import edu.wpi.first.wpilibj.hal.HALUtil;
+import com.snobot.simulator.joysticks.IMockJoystick;
+import com.snobot.simulator.joysticks.JoystickFactory;
+
+import edu.wpi.first.wpilibj.Timer;
 
 public class RobotStateSingleton
 {
@@ -13,18 +15,37 @@ public class RobotStateSingleton
         public void looped();
     }
 
+    /**
+     * Singlteton instance
+     */
     private static RobotStateSingleton sInstance = new RobotStateSingleton();
 
-    private boolean enabled = false;
-    private boolean autonomous = false;
-    private boolean test = false;
-    private long enabled_time;
+    /**
+     * Mutex used to keep things civil between the GUI thread and the Robot
+     * thread
+     */
+    private static final Object sPROGRAM_STARTED_LOCK = new Object();
+
+    /**
+     * The period that the main loop should be run at
+     */
+    private static final double sCYCLE_TIME = .02;
+
+    /**
+     * The time to sleep. You can run simulations faster/slower by changing
+     * this. For example, making the wait time 1 second, means one 20ms cycle
+     * will happen each second, 50x slower than normal. Or, you could make it
+     * .002, which would make the code execute at 10x speed
+     */
+    private double sWaitTime = .02;
+
+    private boolean mRobotStarted = false;
 
     private ArrayList<LoopListener> mListeners = new ArrayList<>();
 
     private RobotStateSingleton()
     {
-        enabled_time = 0;
+        // enabled_time = 0;
     }
 
     public static RobotStateSingleton get()
@@ -37,57 +58,76 @@ public class RobotStateSingleton
         mListeners.add(aListener);
     }
 
-    public void updateLoopListeners()
+    private void updateLoopListeners()
     {
+        IMockJoystick[] joysticks = JoystickFactory.get().getAll();
+        for(int i = 0; i < joysticks.length; ++i)
+        {
+            IMockJoystick joystick = joysticks[i];
+            JoystickJni.setJoystickInformation(i, joystick.getAxisValues(), joystick.getPovValues(), joystick.getButtonCount(),
+                    joystick.getButtonMask());
+        }
+
         SimulationConnectorJni.updateLoop();
+
         for (LoopListener listener : mListeners)
         {
             listener.looped();
         }
     }
 
-    public float getMatchTime()
+    public void waitForProgramStart()
     {
-        if (enabled)
+        if (!mRobotStarted)
         {
-            return (HALUtil.getFPGATime() - enabled_time) * 1e-6f;
+            synchronized (sPROGRAM_STARTED_LOCK)
+            {
+                try
+                {
+                    System.out.println("Waiting for robot to initialize...");
+                    sPROGRAM_STARTED_LOCK.wait();
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
-        return 0;
-
-    }
-
-    public void setDisabled(boolean aDisabled)
-    {
-        enabled = !aDisabled;
-        if (enabled)
+        else
         {
-            enabled_time = HALUtil.getFPGATime();
+            System.out.println("Robot already initialized!");
         }
+
     }
 
-    public void setAutonomous(boolean aAutonomous)
+    public void robotInitialized()
     {
-
-        if (autonomous != aAutonomous)
+        synchronized (sPROGRAM_STARTED_LOCK)
         {
-            enabled_time = HALUtil.getFPGATime();
+            System.out.println("Robot Initialized");
+            System.out.println("\n\n");
+            sPROGRAM_STARTED_LOCK.notify();
+            mRobotStarted = true;
         }
-        autonomous = aAutonomous;
     }
 
-    public void setTest(boolean aTest)
+    public void waitForDSData()
     {
-        test = aTest;
+        Timer.delay(sWaitTime);
+
+        synchronized (sPROGRAM_STARTED_LOCK)
+        {
+            updateLoopListeners();
+        }
     }
 
-    public void updateControlWord(ControlWord controlWord)
+    public void setWaitTime(double aTime)
     {
-        controlWord.update(
-                enabled,
-                autonomous,
-                test,
-                false,
-                true,
-                true);
+        sWaitTime = aTime;
+    }
+
+    public double getCycleTime()
+    {
+        return sCYCLE_TIME;
     }
 }

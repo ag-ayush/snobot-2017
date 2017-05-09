@@ -11,7 +11,6 @@ import javax.swing.SwingUtilities;
 import com.snobot.simulator.gui.SimulatorFrame;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Simulator
@@ -76,7 +75,7 @@ public class Simulator
         loadConfig(sPROPERTIES_FILE);
 
         // Do all of the stuff that
-        HAL.setWaitTime(.02);
+        RobotStateSingleton.get().setWaitTime(.02);
 
         createSimulator();
         createRobot();
@@ -123,7 +122,7 @@ public class Simulator
                 // created and hook itself up
                 try
                 {
-                    HAL.waitForProgramStart();
+                    RobotStateSingleton.get().waitForProgramStart();
 
                     if (mSimulator != null)
                     {

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,8 @@ import com.snobot.simulator.module_wrapper.EncoderWrapperJni;
 import com.snobot.simulator.module_wrapper.RelayWrapperJni;
 import com.snobot.simulator.module_wrapper.SolenoidWrapperJni;
 import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
+import com.snobot.simulator.motor_sim.DcMotorModelConfig;
+import com.snobot.simulator.motor_sim.motors.MakeTransmission;
 
 @SuppressWarnings("unchecked")
 public class SimulatorConfigReader
@@ -147,11 +151,19 @@ public class SimulatorConfigReader
         switch (type)
         {
         case "Simple":
-            double maxSpeed = ((Number) motorSimConfig.get("max_speed")).doubleValue();
-            SimulationConnectorJni.setSpeedControllerSimpleModel(aScHandle, maxSpeed);
+            loadMotorSimSimple(aScHandle, motorSimConfig);
+            break;
+        case "StaticLoad":
+            loadMotorSimStaticLoad(aScHandle, motorSimConfig);
+            break;
+        case "GravityLoad":
+            loadMotorSimGravityLoad(aScHandle, motorSimConfig);
+            break;
+        case "RotationalLoad":
+            loadMotorSimRotationalLoad(aScHandle, motorSimConfig);
             break;
         default:
-            System.err.println("Unknown sim type!");
+            System.err.println("Unknown motor sim type: " + type);
         }
     }
 
@@ -168,6 +180,92 @@ public class SimulatorConfigReader
 
             SimulationConnectorJni.connectTankDriveSimulator(leftEncHandleA, leftEncHandleB, rightEncHandleA, rightEncHandleB, scHandle, turnKp);
         }
+    }
+
+    protected void loadMotorSimSimple(int aScHandle, Map<String, Object> motorSimConfig)
+    {
+        double maxSpeed = ((Number) motorSimConfig.get("max_speed")).doubleValue();
+        SimulationConnectorJni.setSpeedControllerModel_Simple(aScHandle, maxSpeed);
+    }
+
+    protected void loadMotorSimStaticLoad(int aScHandle, Map<String, Object> motorSimConfig)
+    {
+        double load = ((Number) motorSimConfig.get("load")).doubleValue();
+        DcMotorModelConfigJni motorConfig = createDcMotorModel((Map<String, Object>) motorSimConfig.get("motor_model"));
+
+        SimulationConnectorJni.setSpeedControllerModel_Static(aScHandle, motorConfig, load);
+    }
+
+    protected void loadMotorSimGravityLoad(int aScHandle, Map<String, Object> motorSimConfig)
+    {
+        double load = ((Number) motorSimConfig.get("load")).doubleValue();
+        DcMotorModelConfigJni motorConfig = createDcMotorModel((Map<String, Object>) motorSimConfig.get("motor_model"));
+
+        SimulationConnectorJni.setSpeedControllerModel_Gravitational(aScHandle, motorConfig, load);
+    }
+
+    protected void loadMotorSimRotationalLoad(int aScHandle, Map<String, Object> motorSimConfig)
+    {
+        double armCenterOfMass = ((Number) motorSimConfig.get("arm_center_of_mass")).doubleValue();
+        double armMass = ((Number) motorSimConfig.get("arm_mass")).doubleValue();
+        DcMotorModelConfigJni motorConfig = createDcMotorModel((Map<String, Object>) motorSimConfig.get("motor_model"));
+
+        SimulationConnectorJni.setSpeedControllerModel_Rotational(aScHandle, motorConfig, armCenterOfMass, armMass);
+    }
+
+    protected DcMotorModelConfigJni createDcMotorModel(Map<String, Object> modelConfig)
+    {
+        DcMotorModelConfig output = null;
+
+        if (modelConfig.containsKey("motor_factory_func"))
+        {
+            String motorFactoryFunc = modelConfig.get("motor_factory_func").toString();
+
+            int lastDot = motorFactoryFunc.lastIndexOf(".");
+            String className = motorFactoryFunc.substring(0, lastDot);
+            String methodName = motorFactoryFunc.substring(lastDot + 1);
+
+            try
+            {
+                Class<?> myClass = Class.forName(className);
+                Method myMethod = myClass.getDeclaredMethod(methodName);
+                output = (DcMotorModelConfig) myMethod.invoke(null);
+            }
+            catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalArgumentException | IllegalAccessException
+                    | InvocationTargetException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            System.err.println("Only reflection creation is supported");
+        }
+
+        if (modelConfig.containsKey("transmission"))
+        {
+            Map<String, Object> transmissionConfig = (Map<String, Object>) modelConfig.get("transmission");
+            int numMotors = (Integer) transmissionConfig.get("num_motors");
+            double reduction = ((Number) transmissionConfig.get("gear_reduction")).doubleValue();
+            double efficiency = ((Number) transmissionConfig.get("efficiency")).doubleValue();
+
+            output = MakeTransmission.makeTransmission(output, numMotors, reduction, efficiency);
+        }
+
+        if (modelConfig.containsKey("inverted"))
+        {
+            output.setInverted((Boolean) modelConfig.get("inverted"));
+        }
+
+        return new DcMotorModelConfigJni(
+                output.NOMINAL_VOLTAGE, 
+                output.FREE_SPEED_RPM, 
+                output.FREE_CURRENT, 
+                output.STALL_TORQUE, 
+                output.FREE_CURRENT, 
+                output.mMotorInertia,
+                output.mHasBrake,
+                output.mInverted);
     }
 
     protected int getIntHandle(Object aHandleObject)
@@ -188,7 +286,7 @@ public class SimulatorConfigReader
 
             try
             {
-                Class myClass = Class.forName(className);
+                Class<?> myClass = Class.forName(className);
                 Field myField = myClass.getDeclaredField(fieldName);
                 output = myField.getInt(null);
             }

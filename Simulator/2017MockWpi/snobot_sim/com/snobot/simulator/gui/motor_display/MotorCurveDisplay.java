@@ -15,14 +15,14 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import com.snobot.simulator.motor_sim.DcMotorModel;
+import com.snobot.simulator.motor_sim.DcMotorModelConfig;
 
 
 public class MotorCurveDisplay extends JPanel
 {
     private ValueMarker mRpmMarker;
 
-    public MotorCurveDisplay(DcMotorModel aModel)
+    public MotorCurveDisplay(DcMotorModelConfig aModel)
     {
         this(aModel.NOMINAL_VOLTAGE, aModel.FREE_SPEED_RPM, aModel.STALL_CURRENT, aModel.FREE_CURRENT, aModel.STALL_TORQUE);
     }
