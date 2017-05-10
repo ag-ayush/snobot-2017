@@ -11,11 +11,11 @@ import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
+import com.snobot.DcMotorModelConfig;
 import com.snobot.simulator.module_wrapper.EncoderWrapperJni;
 import com.snobot.simulator.module_wrapper.RelayWrapperJni;
 import com.snobot.simulator.module_wrapper.SolenoidWrapperJni;
 import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
-import com.snobot.simulator.motor_sim.DcMotorModelConfig;
 import com.snobot.simulator.motor_sim.motors.MakeTransmission;
 
 @SuppressWarnings("unchecked")
@@ -191,15 +191,23 @@ public class SimulatorConfigReader
     protected void loadMotorSimStaticLoad(int aScHandle, Map<String, Object> motorSimConfig)
     {
         double load = ((Number) motorSimConfig.get("load")).doubleValue();
-        DcMotorModelConfigJni motorConfig = createDcMotorModel((Map<String, Object>) motorSimConfig.get("motor_model"));
+        DcMotorModelConfig motorConfig = createDcMotorModel((Map<String, Object>) motorSimConfig.get("motor_model"));
 
-        SimulationConnectorJni.setSpeedControllerModel_Static(aScHandle, motorConfig, load);
+        if (motorSimConfig.containsKey("conversion_factor"))
+        {
+            double conversionFactor = ((Number) motorSimConfig.get("conversion_factor")).doubleValue();
+            SimulationConnectorJni.setSpeedControllerModel_Static(aScHandle, motorConfig, load, conversionFactor);
+        }
+        else
+        {
+            SimulationConnectorJni.setSpeedControllerModel_Static(aScHandle, motorConfig, load);
+        }
     }
 
     protected void loadMotorSimGravityLoad(int aScHandle, Map<String, Object> motorSimConfig)
     {
         double load = ((Number) motorSimConfig.get("load")).doubleValue();
-        DcMotorModelConfigJni motorConfig = createDcMotorModel((Map<String, Object>) motorSimConfig.get("motor_model"));
+        DcMotorModelConfig motorConfig = createDcMotorModel((Map<String, Object>) motorSimConfig.get("motor_model"));
 
         SimulationConnectorJni.setSpeedControllerModel_Gravitational(aScHandle, motorConfig, load);
     }
@@ -208,12 +216,12 @@ public class SimulatorConfigReader
     {
         double armCenterOfMass = ((Number) motorSimConfig.get("arm_center_of_mass")).doubleValue();
         double armMass = ((Number) motorSimConfig.get("arm_mass")).doubleValue();
-        DcMotorModelConfigJni motorConfig = createDcMotorModel((Map<String, Object>) motorSimConfig.get("motor_model"));
+        DcMotorModelConfig motorConfig = createDcMotorModel((Map<String, Object>) motorSimConfig.get("motor_model"));
 
         SimulationConnectorJni.setSpeedControllerModel_Rotational(aScHandle, motorConfig, armCenterOfMass, armMass);
     }
 
-    protected DcMotorModelConfigJni createDcMotorModel(Map<String, Object> modelConfig)
+    protected DcMotorModelConfig createDcMotorModel(Map<String, Object> modelConfig)
     {
         DcMotorModelConfig output = null;
 
@@ -257,15 +265,16 @@ public class SimulatorConfigReader
             output.setInverted((Boolean) modelConfig.get("inverted"));
         }
 
-        return new DcMotorModelConfigJni(
-                output.NOMINAL_VOLTAGE, 
-                output.FREE_SPEED_RPM, 
-                output.FREE_CURRENT, 
-                output.STALL_TORQUE, 
-                output.FREE_CURRENT, 
-                output.mMotorInertia,
-                output.mHasBrake,
-                output.mInverted);
+        return output;
+        // return new DcMotorModelConfig(
+        // output.NOMINAL_VOLTAGE,
+        // output.FREE_SPEED_RPM,
+        // output.FREE_CURRENT,
+        // output.STALL_TORQUE,
+        // output.STALL_CURRENT,
+        // output.mMotorInertia,
+        // output.mHasBrake,
+        // output.mInverted);
     }
 
     protected int getIntHandle(Object aHandleObject)

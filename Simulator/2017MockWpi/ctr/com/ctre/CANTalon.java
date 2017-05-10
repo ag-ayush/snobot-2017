@@ -57,24 +57,24 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
             }
 
             return null;
-    }
+        }
 
         private TalonControlMode(int value)
         {
             this.value = value;
-    }
+        }
 
         @Override
         public boolean isPID()
         {
             return this == Current || this == Speed || this == Position;
-    }
+        }
 
         @Override
         public int getValue()
         {
             return value;
-    }
+        }
     }
 
     public enum FeedbackDevice
@@ -95,12 +95,12 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
             }
 
             return null;
-    }
+        }
 
         private FeedbackDevice(int value)
         {
             this.value = value;
-    }
+        }
     }
 
     /**
@@ -122,12 +122,12 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
                 }
             }
             return null;
-    }
+        }
 
         private FeedbackDeviceStatus(int value)
         {
             this.value = value;
-    }
+        }
     }
 
     /** enumerated types for frame rate ms */
@@ -146,12 +146,12 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
                 }
             }
             return null;
-    }
+        }
 
         private StatusFrameRate(int value)
         {
             this.value = value;
-    }
+        }
     }
 
     /**
@@ -202,12 +202,12 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
                 }
             }
             return null;
-    }
+        }
 
         private SetValueMotionProfile(int value)
         {
             this.value = value;
-    }
+        }
     }
 
     /**
@@ -441,7 +441,7 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
         else
         {
             throw new IllegalStateException("PID only supported in PercentVbus mode");
-    }
+        }
     }
 
     /**
@@ -473,7 +473,7 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
         {
             CanTalonJNI.delete_CanTalonSRX(m_handle);
             m_handle = 0;
-    }
+        }
     }
 
     /**
@@ -526,7 +526,7 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
                 break;
             }
             CanTalonJNI.SetModeSelect(m_handle, m_controlMode.value);
-    }
+        }
     }
 
     /**
@@ -649,7 +649,7 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
         case PercentVbus:
         default:
             return (double) CanTalonJNI.GetAppliedThrottle(m_handle) / 1023.0;
-    }
+        }
     }
 
     /**
@@ -740,7 +740,7 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
                 retval = FeedbackDeviceStatus.FeedbackStatusPresent;
             }
             break;
-    }
+        }
         return retval;
     }
 
@@ -846,7 +846,7 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
         else
         {
             setParameter(CanTalonJNI.param_t.eProfileParamSlot1_AllowableClosedLoopErr, (double) allowableCloseLoopError);
-    }
+        }
     }
 
     // Returns true if limit switch is closed. false if open.
@@ -1024,7 +1024,7 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
         else
         {
             applyControlMode(controlMode);
-    }
+        }
     }
 
     public void setFeedbackDevice(FeedbackDevice device)
@@ -1767,7 +1767,7 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
             retval = kNativePwdUnitsPerRotation;
             scalingAvail = true;
             break;
-    }
+        }
         /* if scaling info is not available give caller zero */
         if (false == scalingAvail)
             return 0;
@@ -1895,7 +1895,7 @@ public class CANTalon implements MotorSafety, PIDOutput, PIDSource, CANSpeedCont
             /* disable the feature first, then update the edge polarity. */
             setParameter(CanTalonJNI.param_t.eClearPositionOnIdx, 0);
             setParameter(CanTalonJNI.param_t.eQuadIdxPolarity, risingEdge ? 1 : 0);
-    }
+        }
     }
 
     /**
