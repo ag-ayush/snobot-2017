@@ -103,7 +103,20 @@ public class HAL extends JNIWrapper
             return AllianceStationID.Blue3;
         default:
             return null;
-        }
+    }
+    }
+
+    @SuppressWarnings("JavadocMethod")
+    public static native boolean isNewControlData();
+
+    @SuppressWarnings("JavadocMethod")
+    public static native void releaseDSMutex();
+
+    @SuppressWarnings("JavadocMethod")
+    public static boolean waitForDSDataTimeout(double timeout)
+    {
+        waitForDSData();
+        return true;
     }
 
     public static int kMaxJoystickAxes = 12;

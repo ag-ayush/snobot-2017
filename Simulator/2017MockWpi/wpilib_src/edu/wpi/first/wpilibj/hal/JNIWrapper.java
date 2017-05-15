@@ -21,7 +21,70 @@ import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 public class JNIWrapper
 {
     static boolean libraryLoaded = false;
-    static File jniLibrary = null;
+
+    private static void loadLibrary(String aLibraryName) throws IOException
+    {
+        String osName = System.getProperty("os.name");
+
+        String resname;
+        if (osName.startsWith("Windows"))
+        {
+            resname = "/Windows/" + System.getProperty("os.arch") + "/";
+            resname += "snobotSimHal.dll";
+        }
+        else
+        {
+            resname = "/" + osName + "/" + System.getProperty("os.arch") + "/";
+            if (osName.startsWith("Windows"))
+            {
+                resname += "snobotSimHal.dylib";
+            }
+            else
+            {
+                resname += "snobotSimHal.so";
+            }
+        }
+
+        InputStream is = NetworkTablesJNI.class.getResourceAsStream(resname);
+        if (is != null)
+        {
+            File jniLibrary;
+            // create temporary file
+            if (osName.startsWith("Windows"))
+            {
+                jniLibrary = File.createTempFile(aLibraryName, ".dll");
+            }
+            else if (osName.startsWith("Mac"))
+            {
+                jniLibrary = File.createTempFile(aLibraryName, ".dylib");
+            }
+            else
+            {
+                jniLibrary = File.createTempFile(aLibraryName, ".so");
+            }
+
+            // flag for delete on exit
+            jniLibrary.deleteOnExit();
+            OutputStream os = new FileOutputStream(jniLibrary);
+
+            byte[] buffer = new byte[1024];
+            int readBytes;
+            try
+            {
+                while ((readBytes = is.read(buffer)) != -1)
+                {
+                    os.write(buffer, 0, readBytes);
+                }
+            }
+            finally
+            {
+                os.close();
+                is.close();
+            }
+            System.load(jniLibrary.getAbsolutePath());
+            System.out.println("Loaded " + jniLibrary);
+        }
+    }
 
     static
     {
@@ -29,66 +92,15 @@ public class JNIWrapper
         {
             try
             {
-                System.loadLibrary("ntcore");
+                loadLibrary("wpilibJavaJNI");
+                // loadLibrary("HALAthena");
             }
-            catch (UnsatisfiedLinkError e)
+            catch (IOException ex)
             {
-                try
-                {
-                    String osname = System.getProperty("os.name");
-                    String resname;
-                    if (osname.startsWith("Windows"))
-                        resname = "/Windows/" + System.getProperty("os.arch") + "/";
-                    else
-                        resname = "/" + osname + "/" + System.getProperty("os.arch") + "/";
-                    System.out.println("platform: " + resname);
-                    if (osname.startsWith("Windows"))
-                        resname += "snobotSimHal.dll";
-                    else if (osname.startsWith("Mac"))
-                        resname += "libntcore.dylib";
-                    else
-                        resname += "libntcore.so";
-                    InputStream is = NetworkTablesJNI.class.getResourceAsStream(resname);
-                    if (is != null)
-                    {
-                        // create temporary file
-                        if (System.getProperty("os.name").startsWith("Windows"))
-                            jniLibrary = File.createTempFile("NetworkTablesJNI", ".dll");
-                        else if (System.getProperty("os.name").startsWith("Mac"))
-                            jniLibrary = File.createTempFile("libNetworkTablesJNI", ".dylib");
-                        else
-                            jniLibrary = File.createTempFile("libNetworkTablesJNI", ".so");
-                        // flag for delete on exit
-                        jniLibrary.deleteOnExit();
-                        OutputStream os = new FileOutputStream(jniLibrary);
-
-                        byte[] buffer = new byte[1024];
-                        int readBytes;
-                        try
-                        {
-                            while ((readBytes = is.read(buffer)) != -1)
-                            {
-                                os.write(buffer, 0, readBytes);
-                            }
-                        }
-                        finally
-                        {
-                            os.close();
-                            is.close();
-                        }
-                        System.load(jniLibrary.getAbsolutePath());
-                    }
-                    else
-                    {
-                        System.loadLibrary("ntcore");
-                    }
+                ex.printStackTrace();
+                System.exit(1);
                 }
-                catch (IOException ex)
-                {
-                    ex.printStackTrace();
-                    System.exit(1);
-            }
-            }
+
             libraryLoaded = true;
         }
     }
