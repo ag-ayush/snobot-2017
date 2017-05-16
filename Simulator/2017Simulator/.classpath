@@ -17,5 +17,7 @@
 	<classpathentry kind="lib" path="/2017MockWpi/templibs/ntcore-windows.jar"/>
 	<classpathentry kind="lib" path="/2017MockWpi/3rdParyLibraries/snakeyaml-1.11.jar"/>
 	<classpathentry kind="lib" path="/2017MockWpi/templibs/wpilibj.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/RoboSquad2017"/>
+	<classpathentry kind="lib" path="/2017MockWpi/native_wpi_libs/wpilibj.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
