@@ -1,0 +1,137 @@
+import org.gradle.internal.os.OperatingSystem
+
+apply plugin: 'cpp'
+
+if (OperatingSystem.current().isLinux()) 
+{
+    apply from: "wrapper_tools/toolchains/linux.gradle"
+    ext.wpilibBuildPath    = '/home/pj/GitHub/FIRST/2017/TempAllWpi/build'
+    ext.snobotSimBuildPath = '/home/pj/GitHub/FIRST/2017/CppSimulator/build'
+}
+else
+{
+    apply from: "wrapper_tools/toolchains/windows.gradle"
+    ext.wpilibBuildPath    = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/build'
+    ext.snobotSimBuildPath = 'C:/Users/PJ/GitHub/FIRST_2017/WpiUpdates/WpiHalRefactor/build'
+}
+
+defineExternalLibraries(wpilibBuildPath)
+
+
+ext.robotName = "Robot"
+
+
+ext.wrapperDir = new File('build/wrapperSource')
+
+apply from: 'wrapper_tools/generate_wrapper_files.gradle'
+apply from: 'wrapper_tools/compile_java.gradle'
+
+ext.getPlatformPath = { binary ->
+    if (binary.targetPlatform.architecture.arm) {
+        return 'Linux/arm'
+    } else if (binary.targetPlatform.operatingSystem.linux) {
+        if (binary.targetPlatform.architecture.amd64) {
+            return 'Linux/amd64'
+        } else {
+            return 'Linux/' + binary.targetPlatform.architecture.name
+        }
+    } else if (binary.targetPlatform.operatingSystem.windows) {
+        if (binary.targetPlatform.architecture.amd64) {
+            return 'Windows/amd64'
+        } else {
+            return 'Windows/' + binary.targetPlatform.architecture.name
+        }
+    } else if (binary.targetPlatform.operatingSystem.macOsX) {
+        if (binary.targetPlatform.architecture.amd64) {
+            return 'Mac OS X/x86_64'
+        } else {
+            return 'Mac OS X/' + binary.targetPlatform.architecture.name
+        }
+    } else {
+        return binary.targetPlatform.operatingSystem.name + '/' + binary.targetPlatform.architecture.name
+    }
+}
+
+
+def checkLibrary(libPath) {
+
+    def lib = new File(libPath)
+    if(!lib.exists())
+    {
+    	throw new GradleException("Could not find required library ${libPath}")
+    }
+}
+
+
+checkLibrary(wpilibcLibraryPath)
+checkLibrary(halLibraryPath)
+checkLibrary(networkTablesLibraryPath)
+checkLibrary(wpilibLibraryPath)
+checkLibrary(canTalonLibraryPath)
+
+
+
+
+
+
+model {
+
+    platforms 
+    {
+        x86 {
+            architecture 'x86'
+        }
+        x64 {
+            architecture 'x86_64'
+        }
+    }
+    
+    components {
+        CppTest(NativeLibrarySpec) {
+            targetPlatform "x64"
+
+            setupJniIncludes(binaries)
+            
+            binaries.all 
+            {
+                tasks.withType(CppCompile) 
+                {
+                    dependsOn generateCppRobotWrapper
+                    dependsOn generateWrapperJavaJni
+                    linker.args  wpilibcLibraryPath
+                    linker.args  halLibraryPath
+                    linker.args  networkTablesLibraryPath
+                    linker.args  wpilibLibraryPath
+                    linker.args  canTalonLibraryPath
+                }
+            }
+            sources 
+            {
+                cpp 
+                {
+                    source 
+                    {
+                        srcDirs = ["src", "build/wrapperSource/src", halIncludePath, wpilibcIncludePath]
+                        includes = ["**/*.cpp"]
+                    }
+                    exportedHeaders 
+                    {
+                        srcDirs = ["src", niLibrariesIncludePath, niLibrariesIncludePath, halIncludePath, wpilibcIncludePath, wpiIncludePath, networkTablesIncludePath]
+                        srcDirs System.getProperty("user.home") + "/wpilib/user/cpp/include"
+                        srcDirs "wrapper_tools/java_jni/include"
+                        srcDirs "wrapper_tools/java_jni/include/linux"
+                        srcDirs.each{
+                        	def dir = new File("${it}")
+                        	if(!dir.exists())
+                        	{
+                        		throw new GradleException("Could not find include directory ${it}")
+                        	}
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+

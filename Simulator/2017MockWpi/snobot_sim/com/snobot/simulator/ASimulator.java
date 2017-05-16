@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
+import com.snobot.simulator.robot_container.IRobotClassContainer;
 
-import edu.wpi.first.wpilibj.RobotBase;
-
-public abstract class ASimulator implements ISimulatorUpdater
+public class ASimulator implements ISimulatorUpdater
 {
     private static final Object sUPDATE_MUTEX = new Object();
 
@@ -39,7 +38,7 @@ public abstract class ASimulator implements ISimulatorUpdater
     }
 
     @Override
-    public void setRobot(RobotBase aRobot)
+    public void setRobot(IRobotClassContainer aRobot)
     {
         for (ISimulatorUpdater simulator : mSimulatorComponenets)
         {

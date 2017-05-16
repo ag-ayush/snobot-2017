@@ -2,15 +2,17 @@ package com.snobot.simulator.gui.module_widget;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Map.Entry;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import com.snobot.simulator.gui.Util;
+import com.snobot.simulator.gui.module_widget.settings.SimpleSettingsDialog;
 import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
 
 public class SpeedControllerGraphicDisplay extends BaseWidgetDisplay<Integer, MotorDisplay>
@@ -41,10 +43,17 @@ public class SpeedControllerGraphicDisplay extends BaseWidgetDisplay<Integer, Mo
     @Override
     protected JDialog createSettingsDialog(Integer aKey)
     {
-        JDialog dialog = new JDialog();
+        SimpleSettingsDialog dialog = new SimpleSettingsDialog("Speed Controller " + aKey + " Settings", aKey, getName(aKey));
+        dialog.addSubmitListener(new ActionListener()
+        {
 
-        dialog.setTitle("Speed Controller " + aKey + " Settings");
-        dialog.getContentPane().add(new JTextField(getName(aKey)));
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                SpeedControllerWrapperJni.setName(aKey, dialog.getComponentName());
+                mLabelMap.get(aKey).setText(dialog.getComponentName());
+            }
+        });
         dialog.pack();
 
         return dialog;

@@ -1,11 +1,11 @@
 package com.snobot.simulator;
 
-import edu.wpi.first.wpilibj.RobotBase;
+import com.snobot.simulator.robot_container.IRobotClassContainer;
 
 public interface ISimulatorUpdater
 {
 
     public abstract void update();
 
-    public abstract void setRobot(RobotBase mRobot);
+    public abstract void setRobot(IRobotClassContainer mRobot);
 }

@@ -25,6 +25,7 @@ public abstract class BaseWidgetDisplay<KeyType, WidgetType extends Container> e
 {
 
     protected Map<KeyType, WidgetType> mWidgetMap;
+    protected Map<KeyType, JLabel> mLabelMap;
     protected List<JButton> settingsButtons;
 
     public BaseWidgetDisplay(Collection<KeyType> aKeys)
@@ -33,6 +34,7 @@ public abstract class BaseWidgetDisplay<KeyType, WidgetType extends Container> e
 
         settingsButtons = new ArrayList<>();
         mWidgetMap = new HashMap<>();
+        mLabelMap = new HashMap<>();
 
         ImageIcon icon = null;
         try
@@ -74,7 +76,10 @@ public abstract class BaseWidgetDisplay<KeyType, WidgetType extends Container> e
                     });
                 }
 
+                JLabel label = new JLabel("" + getName(key));
+
                 mWidgetMap.put(key, panelPair);
+                mLabelMap.put(key, label);
 
 
                 gc.gridx = 0;
@@ -84,7 +89,7 @@ public abstract class BaseWidgetDisplay<KeyType, WidgetType extends Container> e
                 gc.gridx = 1;
                 gc.weightx = 1;
                 gc.anchor = GridBagConstraints.EAST;
-                add(new JLabel("" + getName(key)), gc);
+                add(label, gc);
 
                 gc.gridx = 2;
                 gc.weightx = 1;

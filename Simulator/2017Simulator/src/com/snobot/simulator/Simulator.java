@@ -1,14 +1,20 @@
 package com.snobot.simulator;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import javax.swing.SwingUtilities;
-
 import com.snobot.simulator.gui.SimulatorFrame;
+import com.snobot.simulator.joysticks.IMockJoystick;
+import com.snobot.simulator.joysticks.JoystickFactory;
+import com.snobot.simulator.robot_container.CppRobotContainer;
+import com.snobot.simulator.robot_container.IRobotClassContainer;
+import com.snobot.simulator.robot_container.JavaRobotContainer;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -18,11 +24,10 @@ public class Simulator
     private static final String sUSER_CONFIG_DIR = "user_config/";
     private static final String sPROPERTIES_FILE = sUSER_CONFIG_DIR + "simulator_config.properties";
 
-    private String mClassName; // The name of the class that should be instantiated
     private String mSimulatorClassName; // The name of the class that represents the simulator
     private String mSimulatorConfig;
 
-    private RobotBase mRobot; // The robot code to run
+    private IRobotClassContainer mRobot; // The robot code to run
     private ASimulator mSimulator; // The robot code to run
 
     public Simulator()
@@ -48,10 +53,21 @@ public class Simulator
             Properties p = new Properties();
             p.load(new FileInputStream(new File(aFile)));
 
-            mClassName = p.getProperty("robot_class");
+            String robotClassName = p.getProperty("robot_class");
             mSimulatorClassName = p.getProperty("simulator_class");
             mSimulatorConfig = p.getProperty("simulator_config");
-            NetworkTable.setPersistentFilename(sUSER_CONFIG_DIR + mClassName + ".preferences.ini");
+
+            String robotType = p.getProperty("robot_type");
+            if (robotType == null || robotType.equals("java"))
+            {
+                mRobot = new JavaRobotContainer(robotClassName);
+            }
+            else if (robotType.equals("cpp"))
+            {
+                mRobot = new CppRobotContainer(robotClassName);
+            }
+
+            NetworkTable.setPersistentFilename(sUSER_CONFIG_DIR + robotClassName + ".preferences.ini");
         }
         catch (Exception e)
         {
@@ -60,31 +76,82 @@ public class Simulator
         }
     }
 
-    private void createRobot() throws InstantiationException, IllegalAccessException, ClassNotFoundException
+    private void createRobot() throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException,
+            SecurityException, IllegalArgumentException, InvocationTargetException
     {
         System.out.println("*************************************************************");
         System.out.println("*                    Starting Robot Code                    *");
         System.out.println("*************************************************************");
 
-        mRobot = (RobotBase) Class.forName(mClassName).newInstance();
+        mRobot.constructRobot();
     }
 
-    public void startSimulation() throws InstantiationException, IllegalAccessException, ClassNotFoundException
+    public void startSimulation()
+            throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, SecurityException,
+            IllegalArgumentException, InvocationTargetException
     {
         RobotBase.initializeHardwareConfiguration();
         loadConfig(sPROPERTIES_FILE);
 
         // Do all of the stuff that
-        RobotStateSingleton.get().setWaitTime(.02);
+        // RobotStateSingleton.get().setWaitTime(.02);
 
         createSimulator();
         createRobot();
 
         Thread robotThread = new Thread(createRobotThread(), "RobotThread");
-        Runnable guiThread = createGuiThread();
 
+
+        Thread t = new Thread(new Runnable()
+        {
+
+            @Override
+            public void run()
+            {
+                RobotStateSingletonJni.waitForProgramToStart();
+
+                if (mSimulator != null)
+                {
+                    mSimulator.createSimulatorComponents(mSimulatorConfig);
+                    mSimulator.setRobot(mRobot);
+                    System.out.println("Created simulator : " + mSimulatorClassName);
+                }
+
+                SimulatorFrame frame = new SimulatorFrame();
+                frame.pack();
+                frame.setVisible(true);
+                frame.addWindowListener(new WindowAdapter()
+                {
+                    /**
+                     * Invoked when a window has been closed.
+                     */
+                    public void windowClosing(WindowEvent e)
+                    {
+                        System.exit(0);
+                    }
+                });
+
+                while (true)
+                {
+                    RobotStateSingletonJni.waitForNextUpdateLoop();
+
+                    mSimulator.update();
+                    frame.updateLoop();
+
+                    IMockJoystick[] joysticks = JoystickFactory.get().getAll();
+                    for (int i = 0; i < joysticks.length; ++i)
+                    {
+                        IMockJoystick joystick = joysticks[i];
+                        JoystickJni.setJoystickInformation(i, joystick.getAxisValues(), joystick.getPovValues(), joystick.getButtonCount(),
+                                joystick.getButtonMask());
+                    }
+
+                    SimulationConnectorJni.updateLoop();
+                }
+            }
+        });
+        t.start();
         robotThread.start();
-        SwingUtilities.invokeLater(guiThread);
     }
 
     private void createSimulator()
@@ -97,9 +164,7 @@ public class Simulator
             }
             else
             {
-                System.out.println("**********************************************************************************");
-                System.out.println("WARNING: Simulator class name was not set up.  Will use default, simple simulation");
-                System.out.println("**********************************************************************************");
+                mSimulator = new ASimulator();
             }
 
         }
@@ -107,51 +172,6 @@ public class Simulator
         {
             throw new RuntimeException("Could not find simulator class " + mSimulatorClassName);
         }
-    }
-
-    private Runnable createGuiThread()
-    {
-        return new Runnable()
-        {
-
-            @Override
-            public void run()
-            {
-
-                // Even though we don't store it, it will still get
-                // created and hook itself up
-                try
-                {
-                    RobotStateSingleton.get().waitForProgramStart();
-
-                    if (mSimulator != null)
-                    {
-                        mSimulator.createSimulatorComponents(mSimulatorConfig);
-                        mSimulator.setRobot(mRobot);
-                        System.out.println("Created simulator : " + mSimulatorClassName);
-
-                        RobotStateSingleton.get().addLoopListener(new RobotStateSingleton.LoopListener()
-                        {
-
-                            @Override
-                            public void looped()
-                            {
-                                mSimulator.update();
-                            }
-                        });
-                    }
-
-                    SimulatorFrame frame = new SimulatorFrame();
-                    frame.pack();
-                    frame.setVisible(true);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                    System.exit(-1);
-                }
-            }
-        };
     }
 
     private Runnable createRobotThread()
@@ -166,6 +186,7 @@ public class Simulator
                 try
                 {
                     mRobot.startCompetition();
+                    System.out.println("Post start comp");
                 }
                 catch (UnsatisfiedLinkError e)
                 {

@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 public class Properties2017
 {
-    public static final boolean sKILL_OLD_ADBS = false;
+    public static final boolean sKILL_OLD_ADBS = true;
 
     // **************************************************************
     // Configuration Constants
