@@ -106,6 +106,19 @@ public class HAL extends JNIWrapper
         }
     }
 
+    @SuppressWarnings("JavadocMethod")
+    public static native boolean isNewControlData();
+
+    @SuppressWarnings("JavadocMethod")
+    public static native void releaseDSMutex();
+
+    @SuppressWarnings("JavadocMethod")
+    public static boolean waitForDSDataTimeout(double timeout)
+    {
+        waitForDSData();
+        return true;
+    }
+
     public static int kMaxJoystickAxes = 12;
     public static int kMaxJoystickPOVs = 12;
 

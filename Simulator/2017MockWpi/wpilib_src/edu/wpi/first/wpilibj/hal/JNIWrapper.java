@@ -22,73 +22,53 @@ public class JNIWrapper
 {
     static boolean libraryLoaded = false;
     static File jniLibrary = null;
+    
+    private static void loadLibrary(String aLibraryname)
+    {
+        String osname = System.getProperty("os.name");
+        String resname;
+        if (osname.startsWith("Windows"))
+        {
+            resname = "/Windows/" + System.getProperty("os.arch") + "/";
+        }
+        else
+        {
+            resname = "/" + osname + "/" + System.getProperty("os.arch") + "/";
+        }
+        System.out.println("platform: " + resname);
+        if (osname.startsWith("Windows"))
+        {
+            resname += aLibraryname + ".dll";
+        }
+        else if (osname.startsWith("Mac"))
+        {
+            resname += aLibraryname + ".dylib";
+        }
+        else
+        {
+            resname += aLibraryname + ".so";
+        }
+        InputStream is = NetworkTablesJNI.class.getResourceAsStream(resname);
+        if (is != null)
+        {
+            resname = new File("../2017MockWpi/native_wpi_libs" + resname).getAbsolutePath();
+            System.out.println(resname);
+            System.load(resname);
+        }
+        else
+        {
+            throw new RuntimeException("Could not load " + resname);
+        }
+    }
 
     static
     {
         if (!libraryLoaded)
         {
-            try
-            {
-                System.loadLibrary("ntcore");
-            }
-            catch (UnsatisfiedLinkError e)
-            {
-                try
-                {
-                    String osname = System.getProperty("os.name");
-                    String resname;
-                    if (osname.startsWith("Windows"))
-                        resname = "/Windows/" + System.getProperty("os.arch") + "/";
-                    else
-                        resname = "/" + osname + "/" + System.getProperty("os.arch") + "/";
-                    System.out.println("platform: " + resname);
-                    if (osname.startsWith("Windows"))
-                        resname += "snobotSimHal.dll";
-                    else if (osname.startsWith("Mac"))
-                        resname += "libntcore.dylib";
-                    else
-                        resname += "libntcore.so";
-                    InputStream is = NetworkTablesJNI.class.getResourceAsStream(resname);
-                    if (is != null)
-                    {
-                        // create temporary file
-                        if (System.getProperty("os.name").startsWith("Windows"))
-                            jniLibrary = File.createTempFile("NetworkTablesJNI", ".dll");
-                        else if (System.getProperty("os.name").startsWith("Mac"))
-                            jniLibrary = File.createTempFile("libNetworkTablesJNI", ".dylib");
-                        else
-                            jniLibrary = File.createTempFile("libNetworkTablesJNI", ".so");
-                        // flag for delete on exit
-                        jniLibrary.deleteOnExit();
-                        OutputStream os = new FileOutputStream(jniLibrary);
-
-                        byte[] buffer = new byte[1024];
-                        int readBytes;
-                        try
-                        {
-                            while ((readBytes = is.read(buffer)) != -1)
-                            {
-                                os.write(buffer, 0, readBytes);
-                            }
-                        }
-                        finally
-                        {
-                            os.close();
-                            is.close();
-                        }
-                        System.load(jniLibrary.getAbsolutePath());
-                    }
-                    else
-                    {
-                        System.loadLibrary("ntcore");
-                    }
-                }
-                catch (IOException ex)
-                {
-                    ex.printStackTrace();
-                    System.exit(1);
-            }
-            }
+//            loadLibrary("libwpiutil");
+            loadLibrary("libsnobotSimHal");
+            loadLibrary("libHALAthena");
+            loadLibrary("libwpilibJavaJNI");
             libraryLoaded = true;
         }
     }

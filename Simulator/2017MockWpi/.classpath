@@ -22,7 +22,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="2017MockWpi/templibs/opencv/x64"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="wpilib" sourcepath="wpilib.sources"/>
 	<classpathentry kind="var" path="opencv" sourcepath="opencv.sources"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/CTRLib.jar"/>
 	<classpathentry kind="lib" path="3rdParyLibraries/RIOdroid.jar"/>
@@ -31,5 +30,6 @@
 	<classpathentry kind="var" path="USERLIBS_DIR/RIOdroid.jar"/>
 	<classpathentry kind="lib" path="templibs/ntcore-windows.jar"/>
 	<classpathentry kind="lib" path="3rdParyLibraries/snakeyaml-1.11.jar"/>
+	<classpathentry kind="lib" path="templibs/wpilibj.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
