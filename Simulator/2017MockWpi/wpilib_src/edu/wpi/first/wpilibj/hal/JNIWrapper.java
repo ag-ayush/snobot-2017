@@ -8,10 +8,7 @@
 package edu.wpi.first.wpilibj.hal;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 
@@ -46,7 +43,7 @@ public class JNIWrapper
         }
         else
         {
-            resname += aLibraryname + ".so";
+            resname += "lib" + aLibraryname + ".so";
         }
         InputStream is = NetworkTablesJNI.class.getResourceAsStream(resname);
         if (is != null)
@@ -66,9 +63,9 @@ public class JNIWrapper
         if (!libraryLoaded)
         {
 //            loadLibrary("libwpiutil");
-            loadLibrary("libsnobotSimHal");
-            loadLibrary("libHALAthena");
-            loadLibrary("libwpilibJavaJNI");
+            loadLibrary("snobotSimHal");
+            loadLibrary("HALAthena");
+            loadLibrary("wpilibJavaJNI");
             libraryLoaded = true;
         }
     }
