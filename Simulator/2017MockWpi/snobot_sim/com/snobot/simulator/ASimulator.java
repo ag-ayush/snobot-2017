@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
-
-import edu.wpi.first.wpilibj.RobotBase;
+import com.snobot.simulator.robot_container.IRobotClassContainer;
 
 public abstract class ASimulator implements ISimulatorUpdater
 {
@@ -39,7 +38,7 @@ public abstract class ASimulator implements ISimulatorUpdater
     }
 
     @Override
-    public void setRobot(RobotBase aRobot)
+    public void setRobot(IRobotClassContainer aRobot)
     {
         for (ISimulatorUpdater simulator : mSimulatorComponenets)
         {

@@ -10,10 +10,10 @@ import org.json.simple.JSONObject;
 import com.snobot.lib.Utilities;
 import com.snobot.simulator.ISimulatorUpdater;
 import com.snobot.simulator.RobotStateSingleton;
+import com.snobot.simulator.robot_container.IRobotClassContainer;
+import com.snobot.simulator.robot_container.JavaRobotContainer;
 import com.snobot2017.Snobot2017;
 import com.snobot2017.positioner.IPositioner;
-
-import edu.wpi.first.wpilibj.RobotBase;
 
 public class CameraSimulator implements ISimulatorUpdater
 {
@@ -215,9 +215,10 @@ public class CameraSimulator implements ISimulatorUpdater
     }
 
     @Override
-    public void setRobot(RobotBase aRobot)
+    public void setRobot(IRobotClassContainer aRobot)
     {
-        mPositioner = ((Snobot2017) aRobot).getPositioner();
+        JavaRobotContainer container = (JavaRobotContainer) aRobot;
+        mPositioner = ((Snobot2017) container.getJavaRobot()).getPositioner();
     }
 
 }

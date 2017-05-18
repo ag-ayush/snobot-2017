@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 public class JNIWrapper
 {
     static boolean libraryLoaded = false;
-    static File jniLibrary = null;
     
     private static void loadLibrary(String aLibraryname)
     {
@@ -66,6 +65,7 @@ public class JNIWrapper
             loadLibrary("snobotSimHal");
             loadLibrary("HALAthena");
             loadLibrary("wpilibJavaJNI");
+            loadLibrary("wpilibc");
             libraryLoaded = true;
         }
     }
