@@ -1,0 +1,133 @@
+import org.gradle.internal.os.OperatingSystem
+
+ext.wpilibcIncludePath = "C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/wpilibc"
+ext.halIncludePath = "C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/hal/include"
+ext.niLibrariesIncludePath = "C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/ni-libraries/include"
+
+ext.wpilibcLibraryPath = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/native/wpilibc/build/libs/wpilibc/static/x86/wpilibc.lib'
+ext.halLibraryPath = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/native/hal/build/libs/hALAthena/static/x86/HALAthena.lib'
+ext.networkTablesLibraryPath = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/prebuildLibraries/Windows/x86/ntcore.lib'
+ext.wpilibLibraryPath = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/prebuildLibraries/Windows/x86/wpiutil.lib'
+
+ext.robotName = "Robot"
+
+
+ext.wrapperDir = new File('build/wrapperSource')
+
+apply from: 'wrapper_tools/generate_wrapper_files.gradle'
+apply from: 'wrapper_tools/compile_java.gradle'
+
+ext.getPlatformPath = { binary ->
+    if (binary.targetPlatform.architecture.arm) {
+        return 'Linux/arm'
+    } else if (binary.targetPlatform.operatingSystem.linux) {
+        if (binary.targetPlatform.architecture.amd64) {
+            return 'Linux/amd64'
+        } else {
+            return 'Linux/' + binary.targetPlatform.architecture.name
+        }
+    } else if (binary.targetPlatform.operatingSystem.windows) {
+        if (binary.targetPlatform.architecture.amd64) {
+            return 'Windows/amd64'
+        } else {
+            return 'Windows/' + binary.targetPlatform.architecture.name
+        }
+    } else if (binary.targetPlatform.operatingSystem.macOsX) {
+        if (binary.targetPlatform.architecture.amd64) {
+            return 'Mac OS X/x86_64'
+        } else {
+            return 'Mac OS X/' + binary.targetPlatform.architecture.name
+        }
+    } else {
+        return binary.targetPlatform.operatingSystem.name + '/' + binary.targetPlatform.architecture.name
+    }
+}
+
+
+
+apply plugin: 'cpp'
+
+
+model {
+    toolChains 
+    {
+        visualCpp(VisualCpp) 
+        {
+            // Workaround for VS2015 adapted from https://github.com/couchbase/couchbase-lite-java-native/issues/23
+            def VS_2015_INCLUDE_DIR = "C:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"
+            def VS_2015_LIB_DIR = "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.10240.0/ucrt"
+            
+            def JAVA_HOME= "C:/Program Files/Java/jdk1.8.0_73"
+
+            eachPlatform {
+                cppCompiler.withArguments { args ->
+                    args << '/EHsc' << '/DNOMINMAX' << '/D_SCL_SECURE_NO_WARNINGS' << '/D_WINSOCK_DEPRECATED_NO_WARNINGS'
+                    if (file(VS_2015_INCLUDE_DIR).exists()) {
+                        args << "/I$VS_2015_INCLUDE_DIR"
+                        args << "/I$JAVA_HOME/include"
+                        args << "/I$JAVA_HOME/include/win32"
+                    }
+                }
+                linker.withArguments { args ->
+                    if (file(VS_2015_LIB_DIR).exists()) {
+                        if (platform.architecture.name == 'x86') {
+                            args << "/LIBPATH:$VS_2015_LIB_DIR/x86"
+                        } else {
+                            args << "/LIBPATH:$VS_2015_LIB_DIR/x64"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    platforms 
+    {
+        x86 {
+            architecture 'x86'
+        }
+        x64 {
+            architecture 'x86_64'
+        }
+    }
+    
+    components {
+        CppTest(NativeLibrarySpec) {
+            targetPlatform "x86"
+
+            setupJniIncludes(binaries)
+            
+            binaries.all 
+            {
+                tasks.withType(CppCompile) 
+                {
+                    dependsOn generateCppRobotWrapper
+                    dependsOn generateWrapperJavaJni
+                    linker.args  wpilibcLibraryPath
+                    linker.args  halLibraryPath
+                    linker.args  networkTablesLibraryPath
+                    linker.args  wpilibLibraryPath
+                }
+            }
+            sources 
+            {
+                cpp 
+                {
+                    source 
+                    {
+                        srcDirs = ["src", "build/wrapperSource/src", niLibrariesIncludePath, halIncludePath, wpilibcIncludePath + "/athena/include", wpilibcIncludePath + "/shared/include"]
+                        includes = ["**/*.cpp"]
+                        
+                        println srcDirs
+                    }
+                    exportedHeaders 
+                    {
+                        srcDirs = ["src", niLibrariesIncludePath, halIncludePath, wpilibcIncludePath + "/athena/include", wpilibcIncludePath + "/shared/include"]
+                    }
+                }
+            }
+        }
+    }
+}
+
+
