@@ -101,7 +101,6 @@ public class Simulator
 
         Thread robotThread = new Thread(createRobotThread(), "RobotThread");
 
-        robotThread.start();
 
         Thread t = new Thread(new Runnable()
         {
@@ -132,8 +131,7 @@ public class Simulator
                     }
                 });
 
-                int qq = 0;
-                while (qq == 1)
+                while (true)
                 {
                     RobotStateSingletonJni.waitForNextUpdateLoop();
 
@@ -153,6 +151,7 @@ public class Simulator
             }
         });
         t.start();
+        robotThread.start();
     }
 
     private void createSimulator()
@@ -189,6 +188,7 @@ public class Simulator
                 try
                 {
                     mRobot.startCompetition();
+                    System.out.println("Post start comp");
                 }
                 catch (UnsatisfiedLinkError e)
                 {

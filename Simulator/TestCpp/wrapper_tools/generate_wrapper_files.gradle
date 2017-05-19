@@ -123,7 +123,7 @@ public class ${robotName}SimulatorJni
         if (is != null)
         {
             resname = new File("../2017MockWpi/native_wpi_libs" + resname).getAbsolutePath();
-            System.out.println(resname);
+            System.out.println("CPP WRAPPER: " + resname);
             System.load(resname);
         }
         else
@@ -168,16 +168,18 @@ task generateWrapperCppJni() {
 #include "com_snobot_simulator_cpp_wrapper_${robotName}_${robotName}SimulatorJni.h"
 #include "CppWrapper_${robotName}.h"
 
+static CppWrapper_${robotName}* wrapper = NULL;
+    
 JNIEXPORT void JNICALL Java_com_snobot_simulator_cpp_1wrapper_${robotName}_${robotName}SimulatorJni_createRobot
 (JNIEnv *, jclass)
 {
-    static CppWrapper_${robotName} wrapper;
+	wrapper = new CppWrapper_${robotName}();
 }
 
 JNIEXPORT void JNICALL Java_com_snobot_simulator_cpp_1wrapper_${robotName}_${robotName}SimulatorJni_startCompetition
 (JNIEnv *, jclass)
 {
-    static CppWrapper_${robotName} wrapper;
+    wrapper->GetRobot()->StartCompetition();
 }
 
 """

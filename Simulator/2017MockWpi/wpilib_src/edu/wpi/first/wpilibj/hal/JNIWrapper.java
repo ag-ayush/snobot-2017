@@ -61,12 +61,12 @@ public class JNIWrapper
     {
         if (!libraryLoaded)
         {
-//            loadLibrary("libwpiutil");
             loadLibrary("snobotSimHal");
             loadLibrary("HALAthena");
             loadLibrary("wpilibJavaJNI");
-            // loadLibrary("wpiutil");
-            // loadLibrary("wpilibc");
+            loadLibrary("ntcore");
+            loadLibrary("wpiutil");
+            loadLibrary("wpilibc");
             libraryLoaded = true;
         }
     }

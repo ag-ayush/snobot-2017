@@ -1,13 +1,19 @@
 import org.gradle.internal.os.OperatingSystem
 
-ext.wpilibcIncludePath = "C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/wpilibc"
-ext.halIncludePath = "C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/hal/include"
-ext.niLibrariesIncludePath = "C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/ni-libraries/include"
 
-ext.wpilibcLibraryPath = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/native/wpilibc/build/libs/wpilibc/static/x64/wpilibc.lib'
-ext.halLibraryPath = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/native/hal/build/libs/hALAthena/static/x64/HALAthena.lib'
-ext.networkTablesLibraryPath = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/prebuildLibraries/Windows/x64/ntcore.lib'
-ext.wpilibLibraryPath = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/prebuildLibraries/Windows/x64/wpiutil.lib'
+ext.wpilibBuildPath    = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/build'
+ext.snobotSimBuildPath = 'C:/Users/PJ/GitHub/FIRST_2017/WpiUpdates/WpiHalRefactor/build'
+
+ext.wpilibcIncludePath       = wpilibBuildPath + "/cpp/wpilibc/include"
+ext.halIncludePath           = wpilibBuildPath + "/cpp/hal/include"
+ext.wpiIncludePath           = wpilibBuildPath + "/cpp/wpiutil/include"
+ext.networkTablesIncludePath = wpilibBuildPath + "/cpp/networktables/include"
+ext.niLibrariesIncludePath   = wpilibBuildPath + "/cpp/ni-libraries/include"
+
+ext.wpilibcLibraryPath       = wpilibBuildPath + '/native/x64/wpilibc.lib'
+ext.networkTablesLibraryPath = wpilibBuildPath + '/native/x64/ntcore.lib'
+ext.wpilibLibraryPath        = wpilibBuildPath + '/native/x64/wpiutil.lib'
+ext.halLibraryPath           = snobotSimBuildPath + '/native/x64/HALAthena.lib'
 
 ext.robotName = "Robot"
 
@@ -115,14 +121,15 @@ model {
                 {
                     source 
                     {
-                        srcDirs = ["src", "build/wrapperSource/src", niLibrariesIncludePath, halIncludePath, wpilibcIncludePath + "/athena/include", wpilibcIncludePath + "/shared/include"]
+                        srcDirs = ["src", "build/wrapperSource/src", halIncludePath, wpilibcIncludePath]
                         includes = ["**/*.cpp"]
+                        println srcDirs
                         
                         println srcDirs
                     }
                     exportedHeaders 
                     {
-                        srcDirs = ["src", niLibrariesIncludePath, halIncludePath, wpilibcIncludePath + "/athena/include", wpilibcIncludePath + "/shared/include"]
+                        srcDirs = ["src", niLibrariesIncludePath, niLibrariesIncludePath, halIncludePath, wpilibcIncludePath, wpiIncludePath, networkTablesIncludePath]
                     }
                 }
             }

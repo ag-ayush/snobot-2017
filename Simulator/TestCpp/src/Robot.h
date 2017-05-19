@@ -9,6 +9,8 @@
 #define SRC_ROBOT_H_
 
 #include <IterativeRobot.h>
+#include "SpeedController.h"
+#include "Joystick.h"
 
 class Robot: public frc::IterativeRobot
 {
@@ -24,6 +26,13 @@ public:
     void TeleopPeriodic() override;
 
     void TestPeriodic() override;
+
+protected:
+
+    std::shared_ptr<SpeedController> mLeftMotor;
+    std::shared_ptr<SpeedController> mRightMotor;
+
+    std::shared_ptr<Joystick> mDriverJoystick;
 
 };
 
