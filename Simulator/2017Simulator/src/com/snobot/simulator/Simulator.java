@@ -1,5 +1,7 @@
 package com.snobot.simulator;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -7,9 +9,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import javax.swing.SwingUtilities;
-
 import com.snobot.simulator.gui.SimulatorFrame;
+import com.snobot.simulator.joysticks.IMockJoystick;
+import com.snobot.simulator.joysticks.JoystickFactory;
 import com.snobot.simulator.robot_container.CppRobotContainer;
 import com.snobot.simulator.robot_container.IRobotClassContainer;
 import com.snobot.simulator.robot_container.JavaRobotContainer;
@@ -92,16 +94,65 @@ public class Simulator
         loadConfig(sPROPERTIES_FILE);
 
         // Do all of the stuff that
-        RobotStateSingleton.get().setWaitTime(.02);
+        // RobotStateSingleton.get().setWaitTime(.02);
 
         createSimulator();
         createRobot();
 
         Thread robotThread = new Thread(createRobotThread(), "RobotThread");
-        Runnable guiThread = createGuiThread();
 
         robotThread.start();
-        SwingUtilities.invokeLater(guiThread);
+
+        Thread t = new Thread(new Runnable()
+        {
+
+            @Override
+            public void run()
+            {
+                RobotStateSingletonJni.waitForProgramToStart();
+
+                if (mSimulator != null)
+                {
+                    mSimulator.createSimulatorComponents(mSimulatorConfig);
+                    mSimulator.setRobot(mRobot);
+                    System.out.println("Created simulator : " + mSimulatorClassName);
+                }
+
+                SimulatorFrame frame = new SimulatorFrame();
+                frame.pack();
+                frame.setVisible(true);
+                frame.addWindowListener(new WindowAdapter()
+                {
+                    /**
+                     * Invoked when a window has been closed.
+                     */
+                    public void windowClosing(WindowEvent e)
+                    {
+                        System.exit(0);
+                    }
+                });
+
+                int qq = 0;
+                while (qq == 1)
+                {
+                    RobotStateSingletonJni.waitForNextUpdateLoop();
+
+                    mSimulator.update();
+                    frame.updateLoop();
+
+                    IMockJoystick[] joysticks = JoystickFactory.get().getAll();
+                    for (int i = 0; i < joysticks.length; ++i)
+                    {
+                        IMockJoystick joystick = joysticks[i];
+                        JoystickJni.setJoystickInformation(i, joystick.getAxisValues(), joystick.getPovValues(), joystick.getButtonCount(),
+                                joystick.getButtonMask());
+                    }
+
+                    SimulationConnectorJni.updateLoop();
+                }
+            }
+        });
+        t.start();
     }
 
     private void createSimulator()
@@ -124,51 +175,6 @@ public class Simulator
         {
             throw new RuntimeException("Could not find simulator class " + mSimulatorClassName);
         }
-    }
-
-    private Runnable createGuiThread()
-    {
-        return new Runnable()
-        {
-
-            @Override
-            public void run()
-            {
-
-                // Even though we don't store it, it will still get
-                // created and hook itself up
-                try
-                {
-                    RobotStateSingleton.get().waitForProgramStart();
-
-                    if (mSimulator != null)
-                    {
-                        mSimulator.createSimulatorComponents(mSimulatorConfig);
-                        mSimulator.setRobot(mRobot);
-                        System.out.println("Created simulator : " + mSimulatorClassName);
-
-                        RobotStateSingleton.get().addLoopListener(new RobotStateSingleton.LoopListener()
-                        {
-
-                            @Override
-                            public void looped()
-                            {
-                                mSimulator.update();
-                            }
-                        });
-                    }
-
-                    SimulatorFrame frame = new SimulatorFrame();
-                    frame.pack();
-                    frame.setVisible(true);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                    System.exit(-1);
-                }
-            }
-        };
     }
 
     private Runnable createRobotThread()

@@ -8,7 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.snobot.simulator.RobotStateSingleton;
 import com.snobot.simulator.RobotStateSingletonJni;
 import com.snobot.simulator.gui.joysticks.JoystickManagerDialog;
 
@@ -23,18 +22,13 @@ public class SimulatorFrame extends JFrame
     public SimulatorFrame()
     {
         initComponenents();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
 
-        RobotStateSingleton.get().addLoopListener(new RobotStateSingleton.LoopListener()
-        {
-
-            @Override
-            public void looped()
-            {
-                mBasicPanel.update();
-                mEnablePanel.setTime(Timer.getMatchTime());
-            }
-        });
+    public void updateLoop()
+    {
+        mBasicPanel.update();
+        mEnablePanel.setTime(Timer.getMatchTime());
     }
 
     private void initComponenents()
