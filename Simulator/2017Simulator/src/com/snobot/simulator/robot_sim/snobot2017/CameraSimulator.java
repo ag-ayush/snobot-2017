@@ -9,7 +9,7 @@ import org.json.simple.JSONObject;
 
 import com.snobot.lib.Utilities;
 import com.snobot.simulator.ISimulatorUpdater;
-import com.snobot.simulator.RobotStateSingleton;
+import com.snobot.simulator.RobotStateSingletonJni;
 import com.snobot.simulator.robot_container.IRobotClassContainer;
 import com.snobot.simulator.robot_container.JavaRobotContainer;
 import com.snobot2017.Snobot2017;
@@ -87,8 +87,8 @@ public class CameraSimulator implements ISimulatorUpdater
 
     public CameraSimulator()
     {
-        mLoopsBetweenUpdates = (int) Math.ceil((1.0 / sFRAMES_PER_SECOND) / RobotStateSingleton.get().getCycleTime());
-        mLoopsStale = (int) Math.ceil((sLATENCY_MS * 1e-3) / RobotStateSingleton.get().getCycleTime());
+        mLoopsBetweenUpdates = (int) Math.ceil((1.0 / sFRAMES_PER_SECOND) / RobotStateSingletonJni.getCycleTime());
+        mLoopsStale = (int) Math.ceil((sLATENCY_MS * 1e-3) / RobotStateSingletonJni.getCycleTime());
         mRobotPositionHistory = new TreeMap<>();
         mLoopCtr = 0;
 

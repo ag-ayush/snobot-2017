@@ -65,7 +65,8 @@ public class JNIWrapper
             loadLibrary("snobotSimHal");
             loadLibrary("HALAthena");
             loadLibrary("wpilibJavaJNI");
-            loadLibrary("wpilibc");
+            // loadLibrary("wpiutil");
+            // loadLibrary("wpilibc");
             libraryLoaded = true;
         }
     }
