@@ -3,14 +3,16 @@ package com.snobot.simulator.gui.module_widget;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Map.Entry;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import com.snobot.simulator.gui.module_widget.settings.SimpleSettingsDialog;
 import com.snobot.simulator.module_wrapper.DigitalSourceWrapperJni;
 
 public class DigitalSourceGraphicDisplay extends BaseWidgetDisplay<Integer, DigitalSourceWrapperDisplay>
@@ -45,10 +47,17 @@ public class DigitalSourceGraphicDisplay extends BaseWidgetDisplay<Integer, Digi
     @Override
     protected JDialog createSettingsDialog(Integer aKey)
     {
-        JDialog dialog = new JDialog();
+        SimpleSettingsDialog dialog = new SimpleSettingsDialog("Digital " + aKey + " Settings", aKey, getName(aKey));
+        dialog.addSubmitListener(new ActionListener()
+        {
 
-        dialog.setTitle("Digital " + aKey + " Settings");
-        dialog.getContentPane().add(new JTextField(getName(aKey)));
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                DigitalSourceWrapperJni.setName(aKey, dialog.getComponentName());
+                mLabelMap.get(aKey).setText(dialog.getComponentName());
+            }
+        });
         dialog.pack();
 
         return dialog;

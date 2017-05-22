@@ -31,5 +31,6 @@
 	<classpathentry kind="lib" path="templibs/ntcore-windows.jar"/>
 	<classpathentry kind="lib" path="3rdParyLibraries/snakeyaml-1.11.jar"/>
 	<classpathentry kind="lib" path="templibs/wpilibj.jar"/>
+	<classpathentry kind="lib" path="3rdParyLibraries/jython-standalone-2.7.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
