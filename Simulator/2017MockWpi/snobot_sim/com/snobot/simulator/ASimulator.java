@@ -6,7 +6,7 @@ import java.util.List;
 import com.snobot.simulator.module_wrapper.SpeedControllerWrapperJni;
 import com.snobot.simulator.robot_container.IRobotClassContainer;
 
-public abstract class ASimulator implements ISimulatorUpdater
+public class ASimulator implements ISimulatorUpdater
 {
     private static final Object sUPDATE_MUTEX = new Object();
 

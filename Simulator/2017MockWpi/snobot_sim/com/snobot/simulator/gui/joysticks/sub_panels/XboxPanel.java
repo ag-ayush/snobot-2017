@@ -49,16 +49,6 @@ public class XboxPanel extends JPanel
         g.clearRect(0, 0, getWidth(), getHeight());
         g.drawImage(mControllerImage, 0, 0, null);
 
-        // System.out.println("XXXX");
-        // System.out.println(mJoystick.getRawButton(XboxButtonMap.X_BUTTON -
-        // 1));
-        // System.out.println(mJoystick.getRawButton(XboxButtonMap.Y_BUTTON -
-        // 1));
-        // System.out.println(mJoystick.getRawButton(XboxButtonMap.B_BUTTON -
-        // 1));
-        // System.out.println(mJoystick.getRawButton(XboxButtonMap.A_BUTTON -
-        // 1));
-
         colorButton(g, mJoystick.getRawButton(XboxButtonMap.X_BUTTON - 1), 490, 218);
         colorButton(g, mJoystick.getRawButton(XboxButtonMap.Y_BUTTON - 1), 550, 170);
         colorButton(g, mJoystick.getRawButton(XboxButtonMap.B_BUTTON - 1), 602, 215);

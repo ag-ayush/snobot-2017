@@ -134,16 +134,11 @@ public class KeyboardJoystick extends BaseJoystick
             {
                 mAxisValues[XboxButtonMap.RIGHT_TRIGGER] = sNEGATIVE_VALUE;
             }
-
-            // System.out.println(mController.getComponent(Identifier.Key.W).getPollData());
-            // System.out.println(mController.getComponent(Identifier.Key.S).getPollData());
-            // System.out.println();
         }
         else
         {
             System.err.println("Controller is null.  The simulator could not setup a controller of type [" + mName + "]");
         }
-        // System.out.println(Arrays.toString(mAxisValues));
 
         return mAxisValues;
     }

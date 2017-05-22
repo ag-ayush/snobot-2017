@@ -125,7 +125,7 @@ public class SimulatorConfigReader
                 int handleA = getIntHandle(encConfig.get("handle_a"));
                 int handleB = getIntHandle(encConfig.get("handle_b"));
 
-                handle = (handleA << 8) + handleB;
+                handle = EncoderWrapperJni.getHandle(handleA, handleB);
             }
             else
             {
@@ -178,7 +178,10 @@ public class SimulatorConfigReader
             int scHandle = getIntHandle(tankDriveConfig.get("gyro_handle"));
             double turnKp = ((Number) tankDriveConfig.get("turn_kp")).doubleValue();
 
-            SimulationConnectorJni.connectTankDriveSimulator(leftEncHandleA, leftEncHandleB, rightEncHandleA, rightEncHandleB, scHandle, turnKp);
+            int leftEncHandle = EncoderWrapperJni.getHandle(leftEncHandleA, leftEncHandleB);
+            int rightEncHandle = EncoderWrapperJni.getHandle(rightEncHandleA, rightEncHandleB);
+
+            SimulationConnectorJni.connectTankDriveSimulator(leftEncHandle, rightEncHandle, scHandle, turnKp);
         }
     }
 

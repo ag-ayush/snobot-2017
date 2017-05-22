@@ -8,31 +8,25 @@
 #ifndef SRC_ROBOT_H_
 #define SRC_ROBOT_H_
 
-#include <IterativeRobot.h>
-#include "SpeedController.h"
-#include "Joystick.h"
 
-class Robot: public frc::IterativeRobot
+#include "Drivetrain/IDrivetrain.h"
+#include "Gearboss/IGearBoss.h"
+#include "Climber/IClimber.h"
+#include "Positioner/IPositioner.h"
+
+#include "SnobotLib/ASnobot.h"
+
+class Robot: public ASnobot
 {
 public:
     void RobotInit();
 
-    void AutonomousInit() override;
-
-    void AutonomousPeriodic() override;
-
-    void TeleopInit() override;
-
-    void TeleopPeriodic() override;
-
-    void TestPeriodic() override;
-
 protected:
 
-    std::shared_ptr<SpeedController> mLeftMotor;
-    std::shared_ptr<SpeedController> mRightMotor;
-
-    std::shared_ptr<Joystick> mDriverJoystick;
+    std::shared_ptr<IDrivetrain> mDrivetrain;
+    std::shared_ptr<IGearBoss> mGearBoss;
+    std::shared_ptr<IClimber> mClimber;
+    std::shared_ptr<IPositioner> mPositioner;
 
 };
 

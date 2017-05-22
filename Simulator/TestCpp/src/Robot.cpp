@@ -2,39 +2,58 @@
 #include "Robot.h"
 #include "Talon.h"
 
+#include "Joystick/SnobotDriverJoystick.h"
+#include "Joystick/SnobotOperatorJoystick.h"
+#include "Climber/SnobotClimber.h"
+#include "Gearboss/SnobotGearBoss.h"
+#include "Drivetrain/SnobotDrivetrain.h"
+#include "Positioner/SnobotPositioner.h"
+#include "SnobotLib/Logger/SnobotLogger.h"
+
+// WpiLib
+#include "AnalogGyro.h"
+
 void Robot::RobotInit()
 {
-    std::cout << "Robot init !!!" << std::endl;
-    mLeftMotor = std::shared_ptr<SpeedController>(new Talon(0));
-    mRightMotor = std::shared_ptr<SpeedController>(new Talon(1));
+    std::shared_ptr<ILogger> logger(new SnobotLogger);
 
-    mDriverJoystick = std::shared_ptr<Joystick>(new Joystick(1));
+    ////////////////////////////////////////////////////////////
+    // Initialize joysticks
+    ////////////////////////////////////////////////////////////
+    std::shared_ptr<Joystick> driverXbox(new Joystick(0));
+    std::shared_ptr<Joystick> operatorXbox(new Joystick(1));
+
+    std::shared_ptr<IOperatorJoystick> operatorJoystick(new SnobotOperatorJoystick(operatorXbox));
+    std::shared_ptr<IDriverJoystick> driverJoystick(new SnobotDriverJoystick(driverXbox, logger));
+
+    ////////////////////////////////////////////////////////////
+    // Initialize subsystems
+    ////////////////////////////////////////////////////////////
+
+    // Drive Train
+    std::shared_ptr<SpeedController> driveLeftMotor(new Talon(0));
+    std::shared_ptr<SpeedController> driveRightMotor(new Talon(1));
+    std::shared_ptr<Encoder> driveLeftEncoder(new Encoder(0, 1));
+    std::shared_ptr<Encoder> driveRightEncoder(new Encoder(2, 3));
+    mDrivetrain = std::shared_ptr<IDrivetrain>(new SnobotDrivetrain(driveLeftMotor, driveRightMotor, driverJoystick, driveLeftEncoder, driveRightEncoder));
+    addModule(mDrivetrain);
+
+    // Gearboss
+    std::shared_ptr<DoubleSolenoid> gearSolenoid(new DoubleSolenoid(0, 1));
+    mGearBoss = std::shared_ptr<SnobotGearBoss>(new SnobotGearBoss(gearSolenoid, operatorJoystick, logger));
+    addModule(mGearBoss);
+
+    // Climber
+    std::shared_ptr<SpeedController> climberMotor(new Talon(2));
+    mClimber = std::shared_ptr<SnobotClimber>(new SnobotClimber(climberMotor, operatorJoystick, logger));
+    addModule(mClimber);
+
+    // Positioner
+    std::shared_ptr<Gyro> gyro(new AnalogGyro(0));
+    mPositioner = std::shared_ptr<IPositioner>(new SnobotPositioner(mDrivetrain, gyro, logger));
+    addModule(mPositioner);
 }
 
-void Robot::AutonomousInit()
-{
 
-}
-
-void Robot::AutonomousPeriodic()
-{
-
-}
-
-void Robot::TeleopInit()
-{
-
-}
-
-void Robot::TeleopPeriodic()
-{
-    mLeftMotor->Set(mDriverJoystick->GetRawAxis(1));
-    mRightMotor->Set(mDriverJoystick->GetRawAxis(5));
-}
-
-void Robot::TestPeriodic()
-{
-
-}
 
 START_ROBOT_CLASS(Robot)

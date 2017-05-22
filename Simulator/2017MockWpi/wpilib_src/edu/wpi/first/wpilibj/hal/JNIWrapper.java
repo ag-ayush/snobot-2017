@@ -8,7 +8,11 @@
 package edu.wpi.first.wpilibj.hal;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Random;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 
@@ -17,9 +21,44 @@ import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 //
 public class JNIWrapper
 {
-    static boolean libraryLoaded = false;
+    private static boolean libraryLoaded = false;
     
-    private static void loadLibrary(String aLibraryname)
+    private static void createAndLoadTempLibrary(File aTempDir, String aResourceName) throws IOException
+    {
+        String fileName = aResourceName.substring(aResourceName.lastIndexOf("/") + 1);
+        String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+        String basename = fileName.substring(0, fileName.lastIndexOf("."));
+
+        InputStream is = NetworkTablesJNI.class.getResourceAsStream(aResourceName);
+        if (is != null)
+        {
+            File jniLibrary = new File(aTempDir, fileName);
+
+            // flag for delete on exit
+            jniLibrary.deleteOnExit();
+            OutputStream os = new FileOutputStream(jniLibrary);
+
+            byte[] buffer = new byte[1024];
+            int readBytes;
+            try
+            {
+                while ((readBytes = is.read(buffer)) != -1)
+                {
+                    os.write(buffer, 0, readBytes);
+                }
+            }
+            finally
+            {
+                os.close();
+                is.close();
+            }
+
+            System.out.println("Created temporary library at " + jniLibrary.getAbsolutePath() + " from resource " + aResourceName);
+            System.load(jniLibrary.getAbsolutePath());
+        }
+    }
+
+    private static void loadLibrary(File aTempDir, String aLibraryname)
     {
         String osname = System.getProperty("os.name");
         String resname;
@@ -31,7 +70,7 @@ public class JNIWrapper
         {
             resname = "/" + osname + "/" + System.getProperty("os.arch") + "/";
         }
-        System.out.println("platform: " + resname);
+
         if (osname.startsWith("Windows"))
         {
             resname += aLibraryname + ".dll";
@@ -44,15 +83,14 @@ public class JNIWrapper
         {
             resname += "lib" + aLibraryname + ".so";
         }
-        InputStream is = NetworkTablesJNI.class.getResourceAsStream(resname);
-        if (is != null)
+
+        try
         {
-            resname = new File("../2017MockWpi/native_wpi_libs" + resname).getAbsolutePath();
-            System.out.println(resname);
-            System.load(resname);
+            createAndLoadTempLibrary(aTempDir, resname);
         }
-        else
+        catch (Exception e)
         {
+            e.printStackTrace();
             throw new RuntimeException("Could not load " + resname);
         }
     }
@@ -61,12 +99,17 @@ public class JNIWrapper
     {
         if (!libraryLoaded)
         {
-            loadLibrary("snobotSimHal");
-            loadLibrary("HALAthena");
-            loadLibrary("wpilibJavaJNI");
-            loadLibrary("ntcore");
-            loadLibrary("wpiutil");
-            loadLibrary("wpilibc");
+            long rando = new Random().nextLong();
+            File tempDir = new File("temp/" + rando + "/");
+            tempDir.mkdirs();
+            tempDir.deleteOnExit();
+
+            loadLibrary(tempDir, "snobotSimHal");
+            loadLibrary(tempDir, "HALAthena");
+            loadLibrary(tempDir, "wpilibJavaJNI");
+            loadLibrary(tempDir, "ntcore");
+            loadLibrary(tempDir, "wpiutil");
+            loadLibrary(tempDir, "wpilibc");
             libraryLoaded = true;
         }
     }

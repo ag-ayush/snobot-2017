@@ -164,9 +164,7 @@ public class Simulator
             }
             else
             {
-                System.out.println("**********************************************************************************");
-                System.out.println("WARNING: Simulator class name was not set up.  Will use default, simple simulation");
-                System.out.println("**********************************************************************************");
+                mSimulator = new ASimulator();
             }
 
         }
