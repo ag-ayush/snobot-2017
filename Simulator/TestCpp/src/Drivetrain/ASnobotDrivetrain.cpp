@@ -12,8 +12,17 @@
 #include "SmartDashboard/SmartDashboard.h"
 
 ASnobotDrivetrain::ASnobotDrivetrain(const std::shared_ptr<SpeedController>& aLeftMotor, const std::shared_ptr<SpeedController>& aRightMotor, const std::shared_ptr<IDriverJoystick>& aJoystick) :
-        mLeftMotor(aLeftMotor), mRightMotor(aRightMotor), mDriverJoystick(aJoystick), mLeftMotorSpeed(0), mRightMotorSpeed(0), mRightMotorDistance(0), mLeftMotorDistance(0), mRightEncoderRaw(0), mLeftEncoderRaw(
-                0), mRobotDrive(aLeftMotor, aRightMotor)
+        mLeftMotor(aLeftMotor),
+		mRightMotor(aRightMotor),
+		mDriverJoystick(aJoystick),
+		mRobotDrive(aLeftMotor, aRightMotor),
+
+		mLeftMotorSpeed(0),
+		mRightMotorSpeed(0),
+		mRightMotorDistance(0),
+		mLeftMotorDistance(0),
+		mRightEncoderRaw(0),
+		mLeftEncoderRaw(0)
 {
 
 }

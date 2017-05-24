@@ -12,10 +12,19 @@
 // WpiLib
 #include "SmartDashboard/SmartDashboard.h"
 
+
 SnobotPositioner::SnobotPositioner(const std::shared_ptr<IDrivetrain>& aDriveTrain, const std::shared_ptr<Gyro>& aGyro, const std::shared_ptr<ILogger>& aLogger) :
-        mDriveTrain(aDriveTrain), mGyro(aGyro), mLogger(aLogger),
-        mXPosition(0), mYPosition(0), mOrientation(0), mTotalDistance(0),
-        mLastDistance(0), mLastTime(0), mSpeed(0), mStartAngle(0)
+        mDriveTrain(aDriveTrain),
+		mLogger(aLogger),
+		mGyro(aGyro),
+        mXPosition(0),
+		mYPosition(0),
+		mOrientation(0),
+		mTotalDistance(0),
+        mLastDistance(0),
+		mLastTime(0),
+		mSpeed(0),
+		mStartAngle(0)
 {
 
 }
