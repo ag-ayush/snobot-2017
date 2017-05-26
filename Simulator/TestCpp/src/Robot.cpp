@@ -7,6 +7,7 @@
 #include "Climber/SnobotClimber.h"
 #include "Gearboss/SnobotGearBoss.h"
 #include "Drivetrain/SnobotDrivetrain.h"
+#include "Drivetrain/SnobotCanDrivetrain.h"
 #include "Positioner/SnobotPositioner.h"
 #include "SnobotLib/Logger/SnobotLogger.h"
 
@@ -30,12 +31,34 @@ void Robot::RobotInit()
     // Initialize subsystems
     ////////////////////////////////////////////////////////////
 
+    bool useCan = true;
+
+
     // Drive Train
-    std::shared_ptr<SpeedController> driveLeftMotor(new Talon(0));
-    std::shared_ptr<SpeedController> driveRightMotor(new Talon(1));
-    std::shared_ptr<Encoder> driveLeftEncoder(new Encoder(0, 1));
-    std::shared_ptr<Encoder> driveRightEncoder(new Encoder(2, 3));
-    mDrivetrain = std::shared_ptr<IDrivetrain>(new SnobotDrivetrain(driveLeftMotor, driveRightMotor, driverJoystick, driveLeftEncoder, driveRightEncoder));
+    if (useCan)
+    {
+        std::shared_ptr<CANTalon> driveLeftMotorA(new CANTalon(0));
+        std::shared_ptr<CANTalon> driveLeftMotorB(new CANTalon(1));
+        driveLeftMotorA->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
+        driveLeftMotorB->SetTalonControlMode(CANTalon::TalonControlMode::kFollowerMode);
+        driveLeftMotorB->Set(driveLeftMotorA->GetDeviceID());
+
+        std::shared_ptr<CANTalon> driveRightMotorA(new CANTalon(2));
+        std::shared_ptr<CANTalon> driveRightMotorB(new CANTalon(3));
+        driveRightMotorA->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
+        driveRightMotorB->SetTalonControlMode(CANTalon::TalonControlMode::kFollowerMode);
+        driveRightMotorB->Set(driveRightMotorA->GetDeviceID());
+
+        mDrivetrain = std::shared_ptr<IDrivetrain>(new SnobotCanDrivetrain(driveLeftMotorA, driveRightMotorB, driverJoystick));
+    }
+    else
+    {
+        std::shared_ptr<SpeedController> driveLeftMotor(new Talon(0));
+        std::shared_ptr<SpeedController> driveRightMotor(new Talon(1));
+        std::shared_ptr<Encoder> driveLeftEncoder(new Encoder(0, 1));
+        std::shared_ptr<Encoder> driveRightEncoder(new Encoder(2, 3));
+        mDrivetrain = std::shared_ptr<IDrivetrain>(new SnobotDrivetrain(driveLeftMotor, driveRightMotor, driverJoystick, driveLeftEncoder, driveRightEncoder));
+    }
     addModule(mDrivetrain);
 
     // Gearboss

@@ -13,16 +13,8 @@
 
 ASnobotDrivetrain::ASnobotDrivetrain(const std::shared_ptr<SpeedController>& aLeftMotor, const std::shared_ptr<SpeedController>& aRightMotor, const std::shared_ptr<IDriverJoystick>& aJoystick) :
         mLeftMotor(aLeftMotor),
-		mRightMotor(aRightMotor),
-		mDriverJoystick(aJoystick),
-		mRobotDrive(aLeftMotor, aRightMotor),
-
-		mLeftMotorSpeed(0),
-		mRightMotorSpeed(0),
-		mRightMotorDistance(0),
-		mLeftMotorDistance(0),
-		mRightEncoderRaw(0),
-		mLeftEncoderRaw(0)
+        mRightMotor(aRightMotor), mDriverJoystick(aJoystick), mRobotDrive(aLeftMotor, aRightMotor),
+        mLeftMotorSpeed(0), mRightMotorSpeed(0), mRightMotorDistance(0), mLeftMotorDistance(0), mRightEncoderRaw(0), mLeftEncoderRaw(0)
 {
 
 }
@@ -35,10 +27,10 @@ ASnobotDrivetrain::~ASnobotDrivetrain()
 
 void ASnobotDrivetrain::initializeLogHeaders()
 {
-//    mLogger.addHeader("LeftEncoderDistance");
-//    mLogger.addHeader("RightEncoderDistance");
-//    mLogger.addHeader("LeftMotorSpeed");
-//    mLogger.addHeader("RightMotorSpeed");
+    mLogger->addHeader("LeftEncoderDistance");
+    mLogger->addHeader("RightEncoderDistance");
+    mLogger->addHeader("LeftMotorSpeed");
+    mLogger->addHeader("RightMotorSpeed");
 }
 
 void ASnobotDrivetrain::control()
@@ -58,10 +50,10 @@ void ASnobotDrivetrain::updateSmartDashboard()
 
 void ASnobotDrivetrain::updateLog()
 {
-//    mLogger.updateLogger(mLeftMotorDistance);
-//    mLogger.updateLogger(mRightMotorDistance);
-//    mLogger.updateLogger(mLeftMotorSpeed);
-//    mLogger.updateLogger(mRightMotorSpeed);
+    mLogger->updateLogger(mLeftMotorDistance);
+    mLogger->updateLogger(mRightMotorDistance);
+    mLogger->updateLogger(mLeftMotorSpeed);
+    mLogger->updateLogger(mRightMotorSpeed);
 }
 
 double ASnobotDrivetrain::getRightDistance()

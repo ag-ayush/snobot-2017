@@ -4,11 +4,28 @@ import java.util.Map;
 
 import com.snobot.simulator.ASimulator;
 import com.snobot.simulator.SimulatorConfigReader;
+import com.snobot2017.PortMappings2017;
 
 public class Snobot2017Simulator extends ASimulator
 {
     private class Snobot2017ConfigReader extends SimulatorConfigReader
     {
+        public void loadConfig(String aConfigFile)
+        {
+            if (aConfigFile != null)
+            {
+                System.out.println("Ignoring provided config file, doing custom thing...");
+            }
+
+            String configFile = "simulator_config/snobot2017_NoCan.yml";
+            if (PortMappings2017.sUSE_CAN_DRIVETRAIN)
+            {
+                configFile = "simulator_config/snobot2017_WithCan.yml";
+            }
+
+            super.loadConfig(configFile);
+        }
+
         @Override
         protected void parseConfig(Object aConfig)
         {

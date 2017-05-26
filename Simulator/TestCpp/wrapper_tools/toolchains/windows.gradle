@@ -10,15 +10,20 @@ model {
             def VS_2015_INCLUDE_DIR = "C:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"
             def VS_2015_LIB_DIR = "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.10240.0/ucrt"
             
-            def JAVA_HOME= "C:/Program Files/Java/jdk1.8.0_73"
+            def jni_include_path = System.properties.'java.home' + "/../include"
+            def jni_dir = new File("${jni_include_path}")
+            if(!jni_dir.exists())
+            {
+                throw new GradleException("Could not find JNI include path ${jni_dir}.  Make sure JAVA_HOME is defined and points to a JDK, and not a JRE")
+            }
 
             eachPlatform {
                 cppCompiler.withArguments { args ->
                     args << '/EHsc' << '/DNOMINMAX' << '/D_SCL_SECURE_NO_WARNINGS' << '/D_WINSOCK_DEPRECATED_NO_WARNINGS'
                     if (file(VS_2015_INCLUDE_DIR).exists()) {
                         args << "/I$VS_2015_INCLUDE_DIR"
-                        args << "/I$JAVA_HOME/include"
-                        args << "/I$JAVA_HOME/include/win32"
+                        args << "/I$jni_include_path"
+                        args << "/I$jni_include_path/win32"
                     }
                 }
                 linker.withArguments { args ->
@@ -42,11 +47,17 @@ def defineExternalLibraries(wpilibBuildPath) {
     ext.networkTablesIncludePath = wpilibBuildPath + "/cpp/networktables/include"
     ext.niLibrariesIncludePath   = wpilibBuildPath + "/cpp/ni-libraries/include"
     
-    ext.wpilibcLibraryPath       = wpilibBuildPath + '/native/x64/wpilibc.lib'
-    ext.networkTablesLibraryPath = wpilibBuildPath + '/native/x64/ntcore.lib'
-    ext.wpilibLibraryPath        = wpilibBuildPath + '/native/x64/wpiutil.lib'
-    ext.halLibraryPath           = snobotSimBuildPath + '/native/x64/HALAthena.lib'
+    ext.wpilibcLibraryPath       = wpilibBuildPath + '/native_windows/shared/x64/wpilibc.lib'
+    ext.networkTablesLibraryPath = wpilibBuildPath + '/native_windows/shared/x64/ntcore.lib'
+    ext.wpilibLibraryPath        = wpilibBuildPath + '/native_windows/shared/x64/wpiutil.lib'
+    ext.halLibraryPath           = snobotSimBuildPath + '/native/shared/x64/HALAthena.lib'
+    ext.canTalonLibraryPath      = snobotSimBuildPath + '/native/shared/x64/ctreOverride.lib'
 }
 
+ext
+{
+    defineExternalLibraries = this.&defineExternalLibraries
+
+}
 
 
