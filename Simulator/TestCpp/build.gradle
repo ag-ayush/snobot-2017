@@ -118,14 +118,12 @@ model {
                     {
                         srcDirs = ["src", niLibrariesIncludePath, niLibrariesIncludePath, halIncludePath, wpilibcIncludePath, wpiIncludePath, networkTablesIncludePath]
                         srcDirs System.getProperty("user.home") + "/wpilib/user/cpp/include"
-                        srcDirs "wrapper_tools/java_jni/include"
-                        srcDirs "wrapper_tools/java_jni/include/linux"
                         srcDirs.each{
-                        	def dir = new File("${it}")
-                        	if(!dir.exists())
-                        	{
-                        		throw new GradleException("Could not find include directory ${it}")
-                        	}
+                            def dir = new File("${it}")
+                            if(!dir.exists())
+                            {
+                                throw new GradleException("Could not find include directory ${it}")
+                            }
                         }
                     }
                 }

@@ -86,7 +86,16 @@ public class JNIWrapper
 
         try
         {
-            createAndLoadTempLibrary(aTempDir, resname);
+            if(aTempDir == null)
+            {
+                File f = new File("../2017MockWpi/native_wpi_libs" + resname);
+                System.out.println(f.getAbsolutePath());
+                System.load(f.getAbsolutePath());
+            }
+            else
+            {
+                createAndLoadTempLibrary(aTempDir, resname);
+            }
         }
         catch (Exception e)
         {
@@ -99,10 +108,16 @@ public class JNIWrapper
     {
         if (!libraryLoaded)
         {
-            long rando = new Random().nextLong();
-            File tempDir = new File("temp/" + rando + "/");
-            tempDir.mkdirs();
-            tempDir.deleteOnExit();
+            boolean copyLibraries = false;
+            File tempDir = null;
+
+            if (copyLibraries)
+            {
+                long rando = new Random().nextLong();
+                tempDir = new File("temp/" + rando + "/");
+                tempDir.mkdirs();
+                tempDir.deleteOnExit();
+            }
 
             loadLibrary(tempDir, "snobotSimHal");
             loadLibrary(tempDir, "HALAthena");

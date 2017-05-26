@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.logging.LogManager;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.TalonControlMode;
 import com.snobot.lib.ASnobot;
 import com.snobot.lib.logging.ILogger;
 import com.snobot.lib.logging.LogFormatter;
@@ -91,10 +93,17 @@ public class Snobot2017 extends ASnobot
         {
             CANTalon driveLeftMotorA = new CANTalon(PortMappings2017.sDRIVE_CAN_LEFT_A_PORT);
             CANTalon driveLeftMotorB = new CANTalon(PortMappings2017.sDRIVE_CAN_LEFT_B_PORT);
+            driveLeftMotorA.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+            driveLeftMotorB.changeControlMode(TalonControlMode.Follower);
+            driveLeftMotorB.set(driveLeftMotorA.getDeviceID());
+
             CANTalon driveRightMotorA = new CANTalon(PortMappings2017.sDRIVE_CAN_RIGHT_A_PORT);
             CANTalon driveRightMotorB = new CANTalon(PortMappings2017.sDRIVE_CAN_RIGHT_B_PORT);
+            driveRightMotorA.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+            driveRightMotorB.changeControlMode(TalonControlMode.Follower);
+            driveRightMotorB.set(driveRightMotorA.getDeviceID());
 
-            mDriveTrain = new SnobotCanDriveTrain(driveLeftMotorA, driveLeftMotorB, driveRightMotorA, driveRightMotorB, driverJoystick, logger);
+            mDriveTrain = new SnobotCanDriveTrain(driveLeftMotorA, driveRightMotorA, driverJoystick, logger);
         }
         else
         {

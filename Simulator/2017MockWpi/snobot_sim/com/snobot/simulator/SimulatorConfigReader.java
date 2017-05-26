@@ -26,15 +26,18 @@ public class SimulatorConfigReader
     {
         if (aConfigFile == null)
         {
+            System.out.println("*******************************************");
             System.out.println("Config file not set, won't hook anything up");
+            System.out.println("*******************************************");
             return;
         }
 
         try
         {
-            System.out.println("Loading " + aConfigFile);
+            File file = new File(aConfigFile);
+            System.out.println("Loading " + file.getAbsolutePath());
             Yaml yaml = new Yaml();
-            parseConfig(yaml.load(new FileReader(new File(aConfigFile))));
+            parseConfig(yaml.load(new FileReader(file)));
         }
         catch (IOException e)
         {
@@ -118,19 +121,7 @@ public class SimulatorConfigReader
     {
         for (Map<String, Object> encConfig : aEncoders)
         {
-            int handle = -1;
-
-            if (encConfig.containsKey("handle_a") && encConfig.containsKey("handle_b"))
-            {
-                int handleA = getIntHandle(encConfig.get("handle_a"));
-                int handleB = getIntHandle(encConfig.get("handle_b"));
-
-                handle = EncoderWrapperJni.getHandle(handleA, handleB);
-            }
-            else
-            {
-                throw new RuntimeException("Could not load encoder config, will cause the program to crash");
-            }
+            int handle = getEncoderHandle(encConfig, "handle_a", "handle_b", "single_handle");
 
             if (encConfig.containsKey("name"))
             {
@@ -143,6 +134,29 @@ public class SimulatorConfigReader
                 SimulationConnectorJni.connectEncoderAndSpeedController(handle, speedControllerHandle);
             }
         }
+    }
+
+    protected int getEncoderHandle(Map<String, Object> aConfig, String aDoubleHandleAKey, String aDoubleHandleBKey, String aSingleHandleKey)
+    {
+        int handle = -1;
+
+        if (aConfig.containsKey(aDoubleHandleAKey) && aConfig.containsKey(aDoubleHandleBKey))
+        {
+            int handleA = getIntHandle(aConfig.get(aDoubleHandleAKey));
+            int handleB = getIntHandle(aConfig.get(aDoubleHandleBKey));
+
+            handle = EncoderWrapperJni.getHandle(handleA, handleB);
+        }
+        else if (aConfig.containsKey(aSingleHandleKey))
+        {
+            handle = getIntHandle(aConfig.get(aSingleHandleKey));
+        }
+        else
+        {
+            throw new RuntimeException("Could not load encoder config, will cause the program to crash");
+        }
+
+        return handle;
     }
 
     protected void parseMotorSimConfig(int aScHandle, Map<String, Object> motorSimConfig)
@@ -171,15 +185,11 @@ public class SimulatorConfigReader
     {
         for (Map<String, Object> tankDriveConfig : aTankDriveConfig)
         {
-            int leftEncHandleA = getIntHandle(tankDriveConfig.get("left_enc_handle_a"));
-            int leftEncHandleB = getIntHandle(tankDriveConfig.get("left_enc_handle_b"));
-            int rightEncHandleA = getIntHandle(tankDriveConfig.get("right_enc_handle_a"));
-            int rightEncHandleB = getIntHandle(tankDriveConfig.get("right_enc_handle_b"));
             int scHandle = getIntHandle(tankDriveConfig.get("gyro_handle"));
             double turnKp = ((Number) tankDriveConfig.get("turn_kp")).doubleValue();
 
-            int leftEncHandle = EncoderWrapperJni.getHandle(leftEncHandleA, leftEncHandleB);
-            int rightEncHandle = EncoderWrapperJni.getHandle(rightEncHandleA, rightEncHandleB);
+            int leftEncHandle = getEncoderHandle(tankDriveConfig, "left_enc_handle_a", "left_enc_handle_b", "left_single_handle");
+            int rightEncHandle = getEncoderHandle(tankDriveConfig, "right_enc_handle_a", "right_enc_handle_b", "right_single_handle");
 
             SimulationConnectorJni.connectTankDriveSimulator(leftEncHandle, rightEncHandle, scHandle, turnKp);
         }
