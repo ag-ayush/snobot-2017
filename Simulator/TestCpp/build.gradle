@@ -53,6 +53,23 @@ ext.getPlatformPath = { binary ->
 }
 
 
+def checkLibrary(libPath) {
+
+    def lib = new File(libPath)
+    if(!lib.exists())
+    {
+    	throw new GradleException("Could not find required library ${libPath}")
+    }
+}
+
+
+checkLibrary(wpilibcLibraryPath)
+checkLibrary(halLibraryPath)
+checkLibrary(networkTablesLibraryPath)
+checkLibrary(wpilibLibraryPath)
+checkLibrary(canTalonLibraryPath)
+
+
 
 
 
@@ -79,14 +96,13 @@ model {
             {
                 tasks.withType(CppCompile) 
                 {
-                
-                println wpilibcLibraryPath
                     dependsOn generateCppRobotWrapper
                     dependsOn generateWrapperJavaJni
                     linker.args  wpilibcLibraryPath
                     linker.args  halLibraryPath
                     linker.args  networkTablesLibraryPath
                     linker.args  wpilibLibraryPath
+                    linker.args  canTalonLibraryPath
                 }
             }
             sources 
@@ -97,13 +113,20 @@ model {
                     {
                         srcDirs = ["src", "build/wrapperSource/src", halIncludePath, wpilibcIncludePath]
                         includes = ["**/*.cpp"]
-                        println srcDirs
-                        
-                        println srcDirs
                     }
                     exportedHeaders 
                     {
                         srcDirs = ["src", niLibrariesIncludePath, niLibrariesIncludePath, halIncludePath, wpilibcIncludePath, wpiIncludePath, networkTablesIncludePath]
+                        srcDirs System.getProperty("user.home") + "/wpilib/user/cpp/include"
+                        srcDirs "wrapper_tools/java_jni/include"
+                        srcDirs "wrapper_tools/java_jni/include/linux"
+                        srcDirs.each{
+                        	def dir = new File("${it}")
+                        	if(!dir.exists())
+                        	{
+                        		throw new GradleException("Could not find include directory ${it}")
+                        	}
+                        }
                     }
                 }
             }

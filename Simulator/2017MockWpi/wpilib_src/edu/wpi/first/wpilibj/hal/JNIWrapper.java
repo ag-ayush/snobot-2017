@@ -110,6 +110,7 @@ public class JNIWrapper
             loadLibrary(tempDir, "ntcore");
             loadLibrary(tempDir, "wpiutil");
             loadLibrary(tempDir, "wpilibc");
+            loadLibrary(tempDir, "ctreOverride");
             libraryLoaded = true;
         }
     }
