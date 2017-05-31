@@ -6,7 +6,7 @@ build_script:
 
     dir
 
-    gradlew.bat build install
+    cmd gradlew.bat build install
 artifacts:
 - path: Simulator/TestCpp/build/libs
   name: TestCppRobot
