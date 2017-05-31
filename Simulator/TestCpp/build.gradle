@@ -1,19 +1,24 @@
 import org.gradle.internal.os.OperatingSystem
+import de.undercouch.gradle.tasks.download.Download
+
+plugins {
+    id "de.undercouch.download" version "3.2.0"
+}
 
 apply plugin: 'cpp'
+
 
 if (OperatingSystem.current().isLinux()) 
 {
     apply from: "wrapper_tools/toolchains/linux.gradle"
-    ext.wpilibBuildPath    = '/home/pj/GitHub/FIRST/2017/TempAllWpi/build'
-    ext.snobotSimBuildPath = '/home/pj/GitHub/FIRST/2017/CppSimulator/build'
 }
 else
 {
     apply from: "wrapper_tools/toolchains/windows.gradle"
-    ext.wpilibBuildPath    = 'C:/Users/PJ/GitHub/FIRST_2017/xxxTempWpi/build'
-    ext.snobotSimBuildPath = 'C:/Users/PJ/GitHub/FIRST_2017/WpiUpdates/WpiHalRefactor/build'
 }
+
+ext.wpilibBuildPath    = "${rootDir}/external_dependencies/wpilib"
+ext.snobotSimBuildPath    = "${rootDir}/external_dependencies/snobotSim"
 
 defineExternalLibraries(wpilibBuildPath)
 
@@ -52,6 +57,52 @@ ext.getPlatformPath = { binary ->
     }
 }
 
+task download_sim_tools(type: Copy) {
+
+	def output_folder = new File("${rootDir}/external_dependencies/")
+    if( !output_folder.exists() ) {
+      output_folder.mkdirs()
+    }
+    
+    if(project.hasProperty('local_wpilib'))
+    {
+	    from project.local_wpilib
+	    into output_folder
+    }
+    else
+    {
+    	
+	    task downloadFile << {
+
+			download {
+			    src "http://ci.appveyor.com/api/projects/pjreiniger/tempallwpi/artifacts/AthenaHal.zip"
+			    dest output_folder
+			    onlyIfNewer true
+		    }
+
+			download {
+			    src "http://ci.appveyor.com/api/projects/pjreiniger/snobotsim/artifacts/SnobotSim.zip"
+			    dest output_folder
+			    onlyIfNewer true
+		    }	        
+		}
+		
+    	task unzipWpilib(type: Copy) {
+		    dependsOn downloadFile
+	        from zipTree(output_folder.toString() + "/AthenaHal.zip")
+        	into output_folder.toString() + "/wpilib"
+    	}
+    	task unzipSnobotSim(type: Copy) {
+		    dependsOn downloadFile
+	        from zipTree(output_folder.toString() + "/SnobotSim.zip")
+        	into output_folder.toString() + "/snobotSim"
+    	}
+    	
+		dependsOn unzipWpilib
+		dependsOn unzipSnobotSim
+    }
+}
+
 
 model {
 
@@ -75,6 +126,7 @@ model {
             {
                 tasks.withType(CppCompile) 
                 {
+            	    dependsOn download_sim_tools
                     dependsOn generateCppRobotWrapper
                     dependsOn generateWrapperJavaJni
                     linker.args  wpilibcLibraryPath
@@ -97,18 +149,15 @@ model {
                     {
                         srcDirs = ["src", niLibrariesIncludePath, niLibrariesIncludePath, halIncludePath, wpilibcIncludePath, wpiIncludePath, networkTablesIncludePath]
                         srcDirs System.getProperty("user.home") + "/wpilib/user/cpp/include"
-                        srcDirs.each{
-                            def dir = new File("${it}")
-                            if(!dir.exists())
-                            {
-                                throw new GradleException("Could not find include directory ${it}")
-                            }
-                        }
                     }
                 }
             }
         }
     }
+}
+
+clean {
+	delete "external_dependencies"
 }
 
 
