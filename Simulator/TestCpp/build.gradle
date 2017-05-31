@@ -20,7 +20,23 @@ else
 ext.wpilibBuildPath    = "${rootDir}/external_dependencies/wpilib"
 ext.snobotSimBuildPath    = "${rootDir}/external_dependencies/snobotSim"
 
-defineExternalLibraries(wpilibBuildPath)
+ext.wpilibcIncludePath       = wpilibBuildPath + "/cpp/wpilibc/include"
+ext.halIncludePath           = wpilibBuildPath + "/cpp/hal/include"
+ext.wpiIncludePath           = wpilibBuildPath + "/cpp/wpiutil/include"
+ext.networkTablesIncludePath = wpilibBuildPath + "/cpp/networktables/include"
+ext.niLibrariesIncludePath   = wpilibBuildPath + "/cpp/ni-libraries/include"
+
+if(false)
+{
+    ext.user_includes   = [System.getProperty("user.home") + "/wpilib/user/cpp/include"]
+}
+else
+{
+    ext.user_includes   = [snobotSimBuildPath + "/cpp/include", snobotSimBuildPath + "/cpp/include"]
+}
+    
+
+defineExternalLibraries()
 
 
 ext.robotName = "Robot"
@@ -30,6 +46,7 @@ ext.wrapperDir = new File('build/wrapperSource')
 
 apply from: 'wrapper_tools/generate_wrapper_files.gradle'
 apply from: 'wrapper_tools/compile_java.gradle'
+
 
 ext.getPlatformPath = { binary ->
     if (binary.targetPlatform.architecture.arm) {
@@ -59,47 +76,53 @@ ext.getPlatformPath = { binary ->
 
 task download_sim_tools(type: Copy) {
 
-	def output_folder = new File("${rootDir}/external_dependencies/")
+    def output_folder = new File("${rootDir}/external_dependencies/")
     if( !output_folder.exists() ) {
       output_folder.mkdirs()
     }
     
-    if(project.hasProperty('local_wpilib'))
+    if(project.hasProperty('local_wpilib') && project.hasProperty('local_snobotSim'))
     {
-	    from project.local_wpilib
-	    into output_folder
+        println "Using local copies"
+        copy {
+            from project.local_wpilib
+            into output_folder.toString() + "/wpilib"
+        }
+        copy {
+            from project.local_snobotSim
+            into output_folder.toString() + "/snobotSim"
+        }
     }
     else
     {
-    	
-	    task downloadFile << {
+        task downloadFile << {
 
-			download {
-			    src "http://ci.appveyor.com/api/projects/pjreiniger/tempallwpi/artifacts/AthenaHal.zip"
-			    dest output_folder
-			    onlyIfNewer true
-		    }
+            download {
+                src "http://ci.appveyor.com/api/projects/pjreiniger/tempallwpi/artifacts/AthenaHal.zip"
+                dest output_folder
+                onlyIfNewer true
+            }
 
-			download {
-			    src "http://ci.appveyor.com/api/projects/pjreiniger/snobotsim/artifacts/SnobotSim.zip"
-			    dest output_folder
-			    onlyIfNewer true
-		    }	        
-		}
-		
-    	task unzipWpilib(type: Copy) {
-		    dependsOn downloadFile
-	        from zipTree(output_folder.toString() + "/AthenaHal.zip")
-        	into output_folder.toString() + "/wpilib"
-    	}
-    	task unzipSnobotSim(type: Copy) {
-		    dependsOn downloadFile
-	        from zipTree(output_folder.toString() + "/SnobotSim.zip")
-        	into output_folder.toString() + "/snobotSim"
-    	}
-    	
-		dependsOn unzipWpilib
-		dependsOn unzipSnobotSim
+            download {
+                src "http://ci.appveyor.com/api/projects/pjreiniger/snobotsim/artifacts/SnobotSim.zip"
+                dest output_folder
+                onlyIfNewer true
+            }            
+        }
+        
+        task unzipWpilib(type: Copy) {
+            dependsOn downloadFile
+            from zipTree(output_folder.toString() + "/AthenaHal.zip")
+            into output_folder.toString() + "/wpilib"
+        }
+        task unzipSnobotSim(type: Copy) {
+            dependsOn downloadFile
+            from zipTree(output_folder.toString() + "/SnobotSim.zip")
+            into output_folder.toString() + "/snobotSim"
+        }
+        
+        dependsOn unzipWpilib
+        dependsOn unzipSnobotSim
     }
 }
 
@@ -126,7 +149,7 @@ model {
             {
                 tasks.withType(CppCompile) 
                 {
-            	    dependsOn download_sim_tools
+                    dependsOn download_sim_tools
                     dependsOn generateCppRobotWrapper
                     dependsOn generateWrapperJavaJni
                     linker.args  wpilibcLibraryPath
@@ -148,7 +171,8 @@ model {
                     exportedHeaders 
                     {
                         srcDirs = ["src", niLibrariesIncludePath, niLibrariesIncludePath, halIncludePath, wpilibcIncludePath, wpiIncludePath, networkTablesIncludePath]
-                        srcDirs System.getProperty("user.home") + "/wpilib/user/cpp/include"
+                        srcDirs += ext.user_includes
+                        println srcDirs
                     }
                 }
             }
@@ -157,7 +181,7 @@ model {
 }
 
 clean {
-	delete "external_dependencies"
+    delete "external_dependencies"
 }
 
 

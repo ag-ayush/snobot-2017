@@ -40,13 +40,7 @@ model {
     }
 }
 
-def defineExternalLibraries(wpilibBuildPath) {
-    ext.wpilibcIncludePath       = wpilibBuildPath + "/cpp/wpilibc/include"
-    ext.halIncludePath           = wpilibBuildPath + "/cpp/hal/include"
-    ext.wpiIncludePath           = wpilibBuildPath + "/cpp/wpiutil/include"
-    ext.networkTablesIncludePath = wpilibBuildPath + "/cpp/networktables/include"
-    ext.niLibrariesIncludePath   = wpilibBuildPath + "/cpp/ni-libraries/include"
-    
+def defineExternalLibraries() {
     ext.wpilibcLibraryPath       = wpilibBuildPath + '/native_windows/shared/x64/wpilibc.lib'
     ext.networkTablesLibraryPath = wpilibBuildPath + '/native_windows/shared/x64/ntcore.lib'
     ext.wpilibLibraryPath        = wpilibBuildPath + '/native_windows/shared/x64/wpiutil.lib'
