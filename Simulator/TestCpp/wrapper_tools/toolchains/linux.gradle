@@ -1,6 +1,16 @@
 model {
     toolChains {
         gcc(Gcc) {
+        
+            
+            def jni_include_path = System.properties.'java.home' + "/../include"
+            def jni_dir = new File("${jni_include_path}")
+            println jni_dir
+            if(!jni_dir.exists())
+            {
+                throw new GradleException("Could not find JNI include path ${jni_dir}.  Make sure JAVA_HOME is defined and points to a JDK, and not a JRE")
+            }
+        
             target('x86') {
                 cppCompiler.withArguments { args ->
                     args << '-std=c++11' << '-Wformat=2' << '-Wall' << '-Wextra' << '-Werror' << '-pedantic'
@@ -11,6 +21,8 @@ model {
                     args << '-Wno-error=deprecated-declarations' << '-pthread'
                     args << '-m32'
                     args << '-DFRC_SIMULATOR'
+                    args << "-I$jni_include_path"
+                    args << "-I$jni_include_path/linux"
                 }
                 linker.withArguments { args ->
                     args << '-rdynamic' << '-pthread'
@@ -25,6 +37,8 @@ model {
                     // deprecated function, remove this line (this will cause calling deprecated functions
                     // to be treated as a warning rather than an error).
                     args << '-Wno-error=deprecated-declarations' << '-pthread'
+                    args << "-I$jni_include_path"
+                    args << "-I$jni_include_path/linux"
                 }
                 linker.withArguments { args ->
                     args << '-rdynamic' << '-pthread'

@@ -53,27 +53,6 @@ ext.getPlatformPath = { binary ->
 }
 
 
-def checkLibrary(libPath) {
-
-    def lib = new File(libPath)
-    if(!lib.exists())
-    {
-    	throw new GradleException("Could not find required library ${libPath}")
-    }
-}
-
-
-checkLibrary(wpilibcLibraryPath)
-checkLibrary(halLibraryPath)
-checkLibrary(networkTablesLibraryPath)
-checkLibrary(wpilibLibraryPath)
-checkLibrary(canTalonLibraryPath)
-
-
-
-
-
-
 model {
 
     platforms 
