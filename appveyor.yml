@@ -2,6 +2,7 @@ version: 1.0.{build}
 image: Visual Studio 2015
 build_script:
 - cd: cd Simulator/TestCpp/
+- cmd: dir
 - cmd: gradlew.bat build install
 artifacts:
 - path: Simulator/TestCpp/build/libs
