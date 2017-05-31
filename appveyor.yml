@@ -1,0 +1,8 @@
+version: 1.0.{build}
+image: Visual Studio 2015
+build_script:
+- cd: cd Simulator/TestCpp/
+- cmd: gradlew.bat build install
+artifacts:
+- path: Simulator/TestCpp/build/libs
+  name: TestCppRobot
