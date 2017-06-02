@@ -104,9 +104,13 @@ task download_sim_tools(type: Copy) {
         }
         
         configurations.cppRobotDeps.files.each { file ->
-            def depName = file.name.substring(0, file.name.indexOf('-'))
-            from zipTree(file)
-            into output_folder.toString() + "/" + depName
+        
+            copy {
+	            def depName = file.name.substring(0, file.name.indexOf('-'))
+	            println file
+	            from zipTree(file) 
+	            into output_folder.toString() + "/" + depName
+            }
         }
     }
 }
