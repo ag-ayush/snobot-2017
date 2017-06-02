@@ -1,6 +1,0 @@
-LIBRARY HALAthena
-EXPORTS
-
-
-Java_com_snobot_simulator_cpp_1wrapper_Robot_RobotSimulatorJni_createRobot
-Java_com_snobot_simulator_cpp_1wrapper_Robot_RobotSimulatorJni_startCompetition

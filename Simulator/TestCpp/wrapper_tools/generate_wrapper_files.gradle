@@ -92,58 +92,11 @@ import java.io.InputStream;
 
 public class ${robotName}SimulatorJni
 {
-    static boolean libraryLoaded = false;
-    
-    private static void loadLibrary(String aLibraryname)
-    {
-        String osname = System.getProperty("os.name");
-        String resname;
-        if (osname.startsWith("Windows"))
-        {
-            resname = "/Windows/" + System.getProperty("os.arch") + "/";
-        }
-        else
-        {
-            resname = "/" + osname + "/" + System.getProperty("os.arch") + "/";
-        }
-        System.out.println("platform: " + resname);
-        if (osname.startsWith("Windows"))
-        {
-            resname += aLibraryname + ".dll";
-        }
-        else if (osname.startsWith("Mac"))
-        {
-            resname += aLibraryname + ".dylib";
-        }
-        else
-        {
-            resname += "lib" + aLibraryname + ".so";
-        }
-        InputStream is = ${robotName}SimulatorJni.class.getResourceAsStream(resname);
-        if (is != null)
-        {
-            resname = new File("../2017MockWpi/native_wpi_libs" + resname).getAbsolutePath();
-            System.out.println("CPP WRAPPER: " + resname);
-            System.load(resname);
-        }
-        else
-        {
-            throw new RuntimeException("Could not load " + resname);
-        }
-    }
-    static
-    {
-        if (!libraryLoaded)
-        {
-            //loadLibrary("snobotSimHal");
-            //loadLibrary("HALAthena");
-            //loadLibrary("ntcore");
-            //loadLibrary("wpiutil");
-            loadLibrary("CppTest");
-            libraryLoaded = true;
-        }
-    }
 
+    public static String getLibraryName()
+    {
+        return "CppTest";
+    }
 
     public static native void createRobot();
     public static native void startCompetition();

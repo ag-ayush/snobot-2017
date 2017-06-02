@@ -11,8 +11,6 @@ import javax.swing.JPanel;
 import com.snobot.simulator.RobotStateSingletonJni;
 import com.snobot.simulator.gui.joysticks.JoystickManagerDialog;
 
-import edu.wpi.first.wpilibj.Timer;
-
 public class SimulatorFrame extends JFrame
 {
 
@@ -28,7 +26,7 @@ public class SimulatorFrame extends JFrame
     public void updateLoop()
     {
         mBasicPanel.update();
-        mEnablePanel.setTime(Timer.getMatchTime());
+        mEnablePanel.setTime(RobotStateSingletonJni.getMatchTime());
     }
 
     private void initComponenents()

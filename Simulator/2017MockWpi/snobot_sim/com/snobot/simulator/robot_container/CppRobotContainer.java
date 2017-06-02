@@ -3,6 +3,8 @@ package com.snobot.simulator.robot_container;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import com.snobot.simulator.JniLibraryResourceLoader;
+
 public class CppRobotContainer implements IRobotClassContainer
 {
     private String mRobotClassName;
@@ -19,6 +21,14 @@ public class CppRobotContainer implements IRobotClassContainer
             IllegalArgumentException, InvocationTargetException
     {
         mJniClass = Class.forName(mRobotClassName);
+
+        String libraryName = (String) mJniClass.getMethod("getLibraryName").invoke(null);
+
+        JniLibraryResourceLoader.loadLibrary("ntcore");
+        JniLibraryResourceLoader.loadLibrary("wpiutil");
+        JniLibraryResourceLoader.loadLibrary("wpilibc");
+        JniLibraryResourceLoader.loadLibrary("ctreOverride");
+        JniLibraryResourceLoader.loadLibrary(libraryName);
 
         Method method = mJniClass.getMethod("createRobot");
         method.invoke(null);

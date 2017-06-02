@@ -1,5 +1,7 @@
 package com.snobot.simulator.robot_container;
 
+import com.snobot.simulator.JniLibraryResourceLoader;
+
 import edu.wpi.first.wpilibj.RobotBase;
 
 public class JavaRobotContainer implements IRobotClassContainer
@@ -15,6 +17,9 @@ public class JavaRobotContainer implements IRobotClassContainer
     @Override
     public void constructRobot() throws InstantiationException, IllegalAccessException, ClassNotFoundException
     {
+        JniLibraryResourceLoader.loadLibrary("wpilibJavaJNI");
+
+        RobotBase.initializeHardwareConfiguration();
         mRobot = (RobotBase) Class.forName(mRobotClassName).newInstance();
     }
 

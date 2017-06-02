@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="snobot_sim"/>
 	<classpathentry kind="src" path="ctr"/>
 	<classpathentry kind="src" path="navx_frc"/>
-	<classpathentry kind="src" path="native_wpi_libs"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
@@ -15,6 +14,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="3rdParyLibraries/jfreechart/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="3rdParyLibraries/jfreechart/jfreechart-1.0.14.jar"/>
+	<classpathentry kind="lib" path="templibs/snobotSim.jar"/>
 	<classpathentry kind="var" path="cscore" sourcepath="cscore.sources"/>
 	<classpathentry kind="var" path="networktables" sourcepath="networktables.sources"/>
 	<classpathentry kind="lib" path="templibs/opencv/opencv-320.jar">
@@ -28,7 +28,6 @@
 	<classpathentry kind="lib" path="3rdParyLibraries/simple-json/json-simple-1.1.1.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/json-simple-1.1.1.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/RIOdroid.jar"/>
-	<classpathentry kind="lib" path="templibs/ntcore-windows.jar"/>
 	<classpathentry kind="lib" path="3rdParyLibraries/snakeyaml-1.11.jar"/>
 	<classpathentry kind="lib" path="templibs/wpilibj.jar"/>
 	<classpathentry kind="lib" path="3rdParyLibraries/jython-standalone-2.7.0.jar"/>

@@ -18,6 +18,16 @@ jar {
     duplicatesStrategy = 'exclude'
 
     dependsOn { classes }
+    
+    model {
+        binaries {
+            withType(SharedLibraryBinarySpec) { binary ->
+                from(file(binary.sharedLibraryFile)) {
+                    into getPlatformPath(binary)
+                }
+            }
+        }
+    }
 }
 
 clean {

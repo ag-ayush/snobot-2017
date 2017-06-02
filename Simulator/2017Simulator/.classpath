@@ -15,9 +15,9 @@
 	<classpathentry kind="lib" path="/2017MockWpi/3rdParyLibraries/simple-json/json-simple-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TeachingProject"/>
-	<classpathentry kind="lib" path="/2017MockWpi/templibs/ntcore-windows.jar"/>
 	<classpathentry kind="lib" path="/2017MockWpi/3rdParyLibraries/snakeyaml-1.11.jar"/>
 	<classpathentry kind="lib" path="/2017MockWpi/templibs/wpilibj.jar"/>
 	<classpathentry kind="lib" path="cpp_robots/RobotCppSimulator.jar"/>
+	<classpathentry kind="lib" path="/2017MockWpi/templibs/snobotSim.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

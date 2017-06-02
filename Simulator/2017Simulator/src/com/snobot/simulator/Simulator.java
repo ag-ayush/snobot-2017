@@ -16,7 +16,6 @@ import com.snobot.simulator.robot_container.CppRobotContainer;
 import com.snobot.simulator.robot_container.IRobotClassContainer;
 import com.snobot.simulator.robot_container.JavaRobotContainer;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Simulator
@@ -32,6 +31,10 @@ public class Simulator
 
     public Simulator()
     {
+        JniLibraryResourceLoader.loadLibrary("snobotSimHal");
+        JniLibraryResourceLoader.loadLibrary("HALAthena");
+        // JniLibraryResourceLoader.loadLibrary("ctreOverride");
+
         File config_dir = new File(sUSER_CONFIG_DIR);
         if (!Files.exists(config_dir.toPath()))
         {
@@ -90,7 +93,6 @@ public class Simulator
             throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, SecurityException,
             IllegalArgumentException, InvocationTargetException
     {
-        RobotBase.initializeHardwareConfiguration();
         loadConfig(sPROPERTIES_FILE);
 
         // Do all of the stuff that
