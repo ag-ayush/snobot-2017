@@ -1,9 +1,4 @@
 import org.gradle.internal.os.OperatingSystem
-import de.undercouch.gradle.tasks.download.Download
-
-plugins {
-    id "de.undercouch.download" version "3.2.0"
-}
 
 apply plugin: 'cpp'
 
@@ -17,7 +12,7 @@ else
     apply from: "wrapper_tools/toolchains/windows.gradle"
 }
 
-ext.wpilibBuildPath    = "${rootDir}/external_dependencies/wpilib"
+ext.wpilibBuildPath    = "${rootDir}/external_dependencies/wpilibSim"
 ext.snobotSimBuildPath    = "${rootDir}/external_dependencies/snobotSim"
 
 ext.wpilibcIncludePath       = wpilibBuildPath + "/cpp/wpilibc/include"
@@ -95,34 +90,24 @@ task download_sim_tools(type: Copy) {
     }
     else
     {
-        task downloadFile << {
-
-            download {
-                src "http://ci.appveyor.com/api/projects/pjreiniger/tempallwpi/artifacts/AthenaHal.zip"
-                dest output_folder
-                onlyIfNewer true
+        repositories {
+            maven {
+                url "http://raw.githubusercontent.com/pjreiniger/maven_repo/master/"
             }
-
-            download {
-                src "http://ci.appveyor.com/api/projects/pjreiniger/snobotsim/artifacts/SnobotSim.zip"
-                dest output_folder
-                onlyIfNewer true
-            }            
         }
         
-        task unzipWpilib(type: Copy) {
-            dependsOn downloadFile
-            from zipTree(output_folder.toString() + "/AthenaHal.zip")
-            into output_folder.toString() + "/wpilib"
-        }
-        task unzipSnobotSim(type: Copy) {
-            dependsOn downloadFile
-            from zipTree(output_folder.toString() + "/SnobotSim.zip")
-            into output_folder.toString() + "/snobotSim"
+        configurations.create("cppRobotDeps")
+        
+        dependencies {
+            cppRobotDeps 'edu.wpilib:wpilibSim:1.0'
+            cppRobotDeps 'com.snobot:snobotSim:1.0'
         }
         
-        dependsOn unzipWpilib
-        dependsOn unzipSnobotSim
+        configurations.cppRobotDeps.files.each { file ->
+            def depName = file.name.substring(0, file.name.indexOf('-'))
+            from zipTree(file)
+            into output_folder.toString() + "/" + depName
+        }
     }
 }
 

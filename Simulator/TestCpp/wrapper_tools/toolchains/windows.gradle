@@ -41,9 +41,9 @@ model {
 }
 
 def defineExternalLibraries() {
-    ext.wpilibcLibraryPath       = wpilibBuildPath + '/native_windows/shared/x64/wpilibc.lib'
-    ext.networkTablesLibraryPath = wpilibBuildPath + '/native_windows/shared/x64/ntcore.lib'
-    ext.wpilibLibraryPath        = wpilibBuildPath + '/native_windows/shared/x64/wpiutil.lib'
+    ext.wpilibcLibraryPath       = wpilibBuildPath + '/native/shared/x64/wpilibc.lib'
+    ext.networkTablesLibraryPath = wpilibBuildPath + '/native/shared/x64/ntcore.lib'
+    ext.wpilibLibraryPath        = wpilibBuildPath + '/native/shared/x64/wpiutil.lib'
     ext.halLibraryPath           = snobotSimBuildPath + '/native/shared/x64/HALAthena.lib'
     ext.canTalonLibraryPath      = snobotSimBuildPath + '/native/shared/x64/ctreOverride.lib'
 }

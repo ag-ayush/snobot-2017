@@ -50,9 +50,9 @@ model {
 
 
 def defineExternalLibraries() {
-    ext.wpilibcLibraryPath       = wpilibBuildPath    + '/native_linux/shared/x64/libwpilibc.so'
-    ext.networkTablesLibraryPath = wpilibBuildPath    + '/native_linux/shared/amd64/libntcore.so'
-    ext.wpilibLibraryPath        = wpilibBuildPath    + '/native_linux/shared/amd64/libwpiutil.so'
+    ext.wpilibcLibraryPath       = wpilibBuildPath    + '/native/shared/x64/libwpilibc.so'
+    ext.networkTablesLibraryPath = wpilibBuildPath    + '/native/shared/amd64/libntcore.so'
+    ext.wpilibLibraryPath        = wpilibBuildPath    + '/native/shared/amd64/libwpiutil.so'
     ext.halLibraryPath           = snobotSimBuildPath + '/native/shared/x64/libHALAthena.so'
     ext.canTalonLibraryPath      = snobotSimBuildPath + '/native/shared/libctreOverride.so'
 }
