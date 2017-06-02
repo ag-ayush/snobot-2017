@@ -16,3 +16,7 @@ temp/
 !/3rdParyLibraries
 !/templibs
 !/user_libs
+!/gradle
+build
+
+.gradle
