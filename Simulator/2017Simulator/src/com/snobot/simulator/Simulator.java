@@ -15,6 +15,7 @@ import com.snobot.simulator.joysticks.JoystickFactory;
 import com.snobot.simulator.robot_container.CppRobotContainer;
 import com.snobot.simulator.robot_container.IRobotClassContainer;
 import com.snobot.simulator.robot_container.JavaRobotContainer;
+import com.snobot.simulator.robot_container.PythonRobotContainer;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
@@ -31,10 +32,6 @@ public class Simulator
 
     public Simulator()
     {
-        JniLibraryResourceLoader.loadLibrary("snobotSimHal");
-        JniLibraryResourceLoader.loadLibrary("HALAthena");
-        // JniLibraryResourceLoader.loadLibrary("ctreOverride");
-
         File config_dir = new File(sUSER_CONFIG_DIR);
         if (!Files.exists(config_dir.toPath()))
         {
@@ -68,6 +65,14 @@ public class Simulator
             else if (robotType.equals("cpp"))
             {
                 mRobot = new CppRobotContainer(robotClassName);
+            }
+            else if (robotType.equals("python"))
+            {
+                mRobot = new PythonRobotContainer(robotClassName);
+            }
+            else
+            {
+                throw new RuntimeException("Unsuppored robot type " + robotType);
             }
 
             NetworkTable.setPersistentFilename(sUSER_CONFIG_DIR + robotClassName + ".preferences.ini");
@@ -188,7 +193,6 @@ public class Simulator
                 try
                 {
                     mRobot.startCompetition();
-                    System.out.println("Post start comp");
                 }
                 catch (UnsatisfiedLinkError e)
                 {
