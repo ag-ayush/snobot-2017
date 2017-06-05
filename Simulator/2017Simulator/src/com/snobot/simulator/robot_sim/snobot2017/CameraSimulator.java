@@ -9,7 +9,7 @@ import org.json.simple.JSONObject;
 
 import com.snobot.lib.Utilities;
 import com.snobot.simulator.ISimulatorUpdater;
-import com.snobot.simulator.RobotStateSingletonJni;
+import com.snobot.simulator.jni.RobotStateSingletonJni;
 import com.snobot.simulator.robot_container.IRobotClassContainer;
 import com.snobot.simulator.robot_container.JavaRobotContainer;
 import com.snobot2017.Snobot2017;
