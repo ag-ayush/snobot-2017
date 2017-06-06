@@ -7,6 +7,19 @@ build_script:
     dir
 
     cmd /c gradlew.bat build
+    
+    
+    
+    cd ../../Simulator/2017Simulator
+
+    dir
+
+    cmd /c gradlew.bat build
+
+
 artifacts:
 - path: Simulator/TestCpp/build/libs
   name: TestCppRobot
+  
+- path: Simulator/2017Simulator/build/distributions
+  name: SnobotSimulator

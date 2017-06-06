@@ -19,28 +19,72 @@ sourceSets {
     {
         java
         {
-            srcDirs = ["${rootDir}/src", "${rootDir}/../../RobotCode/snobot2017/src", "${rootDir}/../../RobotCode/SnobotRobotLibs/src"]
+            //srcDirs = ["${rootDir}/src", "${rootDir}/../../RobotCode/snobot2017/src", "${rootDir}/../../RobotCode/SnobotRobotLibs/src"]
         }
     }
 }
 
-dependencies {
+configurations {
+    zippedDeps
+}
 
-    // WPI Stuff
-    compile 'edu.wpi.first.wpilib.networktables.java:NetworkTables:+:desktop'
-    compile 'edu.wpi.first.wpilibj:athena:+'
+dependencies {
+    
+    // Snobot Sim
+    compile 'com.snobot:snobotSim:1.0'
+    compile 'com.snobot:snobotSimGui:1.0'
+    compile 'com.snobot:snobotSimNative-windows:1.0'
+    zippedDeps 'com.snobot:snobotSimJavaDependencies:1.0'
     
     // 3rd Party
     compile 'com.googlecode.json-simple:json-simple:1.1.1'
-    compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/RIOdroid.jar")
-    compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/CTRLib.jar")
-    
-    compile 'com.snobot:snobotSim:1.0'
-    compile 'com.snobot:snobotSimGui:1.0'
+    //compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/RIOdroid.jar")
+    //compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/CTRLib.jar")
+
+    // WPI Stuff
+    compile fileTree(dir: 'dependencies', include: '*.jar')
+}
+
+configurations.zippedDeps.files.each { file ->
+
+    copy {
+        def depName = file.name.substring(0, file.name.indexOf('-'))
+        from zipTree(file) 
+        into "dependencies/"
+        
+        exclude "jinput-platform*.jar"
+    }
 }
 
 jar {
     dependsOn { classes }
+    
+    manifest {
+      attributes(
+        'Main-Class': 'com.snobot.simulator.Main'
+      )
+    }
+}
+
+clean {
+    delete fileTree("dependencies") {
+        include "*.jar"
+    }
+}
+
+// Include more stuff in the application
+distributions {
+    main {
+        contents {
+            from("dependencies") {
+                into "lib"
+                include "*.dll"
+                include "*.so"
+            }
+        }
+    }
+    
 }
 
 mainClassName = "com.snobot.simulator.Main"
+applicationDefaultJvmArgs = ["-Djava.library.path=libs"]
