@@ -2,7 +2,6 @@
 plugins {
     id 'java'
     id 'edu.wpi.first.wpilib.versioning.WPILibVersioningPlugin' version '1.5.1'
-    id 'com.github.johnrengelman.shadow' version '1.2.3'
     id 'application'
 }
 
@@ -16,7 +15,7 @@ repositories {
 }
 
 sourceSets {
-    awSnobotSim
+    main
     {
         java
         {
@@ -28,35 +27,20 @@ sourceSets {
 dependencies {
 
     // WPI Stuff
-    awSnobotSimCompile 'edu.wpi.first.wpilib.networktables.java:NetworkTables:+:desktop'
-    awSnobotSimCompile 'edu.wpi.first.wpilibj:athena:+'
+    compile 'edu.wpi.first.wpilib.networktables.java:NetworkTables:+:desktop'
+    compile 'edu.wpi.first.wpilibj:athena:+'
     
     // 3rd Party
-    awSnobotSimCompile 'com.googlecode.json-simple:json-simple:1.1.1'
-    awSnobotSimCompile files("../2017MockWpi/3rdParyLibraries/RIOdroid.jar")
-    awSnobotSimCompile files(System.getProperty("user.home") + "/wpilib/user/java/lib/CTRLib.jar")
-
-    // Snobot Sim Stuff
-    awSnobotSimCompile files("../2017MockWpi/build/libs/SnobotSimulator.jar")
-    awSnobotSimCompile files("../2017MockWpi/templibs/snobotSim.jar")
-    awSnobotSimCompile files("../../2017MockWpi/templibs/snobotSim.jar")
-    awSnobotSimCompile files("../../2017MockWpi/templibs/snobotSim.jar")
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/RIOdroid.jar")
+    compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/CTRLib.jar")
     
-    
-    shadow 'edu.wpi.first.wpilib.networktables.java:NetworkTables:+:desktop'
-    shadow 'edu.wpi.first.wpilibj:athena:+'
+    compile 'com.snobot:snobotSim:1.0'
+    compile 'com.snobot:snobotSimGui:1.0'
 }
 
 jar {
     dependsOn { classes }
-
-    from sourceSets.awSnobotSim.output
-}
-
-task testJar(type: ShadowJar) {
-  classifier = 'tests'
-  from sourceSets.awSnobotSim.output
-  configurations = [project.configurations.testRuntime]
 }
 
 mainClassName = "com.snobot.simulator.Main"
