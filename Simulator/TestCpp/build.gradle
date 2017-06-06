@@ -12,8 +12,9 @@ else
     apply from: "wrapper_tools/toolchains/windows.gradle"
 }
 
-ext.wpilibBuildPath    = "${rootDir}/external_dependencies/wpilibSim"
-ext.snobotSimBuildPath    = "${rootDir}/external_dependencies/snobotSim"
+ext.wpilibBuildPath      = "${rootDir}/external_dependencies/wpilibSim"
+ext.snobotSimCppSources  = "${rootDir}/external_dependencies/snobotSimCppSources"
+ext.snobotSimNativeLibs  = "${rootDir}/external_dependencies/snobotSimLibrary"
 
 ext.wpilibcIncludePath       = wpilibBuildPath + "/cpp/wpilibc/include"
 ext.halIncludePath           = wpilibBuildPath + "/cpp/hal/include"
@@ -27,7 +28,7 @@ if(false)
 }
 else
 {
-    ext.user_includes   = [snobotSimBuildPath + "/cpp/include", snobotSimBuildPath + "/cpp/include"]
+    ext.user_includes   = [snobotSimCppSources]
 }
     
 
@@ -96,14 +97,15 @@ task download_sim_tools(type: Copy) {
             }
         }
         
-        configurations.create("cppRobotDeps")
+        configurations.create("zippedDeps")
         
         dependencies {
-            cppRobotDeps 'edu.wpilib:wpilibSim:1.0'
-            cppRobotDeps 'com.snobot:snobotSim:1.0'
+            zippedDeps 'edu.wpilib:wpilibSim:1.0'
+            zippedDeps 'com.snobot:snobotSimCppSources:1.0'
+            zippedDeps 'com.snobot:snobotSimLibrary-windows:1.0'
         }
         
-        configurations.cppRobotDeps.files.each { file ->
+        configurations.zippedDeps.files.each { file ->
         
             copy {
 	            def depName = file.name.substring(0, file.name.indexOf('-'))
@@ -112,7 +114,7 @@ task download_sim_tools(type: Copy) {
 	            into output_folder.toString() + "/" + depName
             }
         }
-    }
+    }   
 }
 
 
