@@ -18,8 +18,7 @@ addons:
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 
-install:
-  - ./gradlew assemble --refresh-dependencies
+install: []
 
 cache:
   directories:
