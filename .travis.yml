@@ -1,0 +1,45 @@
+language: java
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+
+    #- os: osx
+    #  osx_image: xcode8
+
+addons:
+  apt:
+    packages:
+      - g++-multilib
+      - lib32stdc++6
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
+install:
+  - ./gradlew assemble --refresh-dependencies
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+script:
+  - cd Simulator/TestCpp
+  - ls
+  - ./gradlew build --refresh-dependencies
+
+  - cd ../../Simulator/2017Simulator
+  - ls
+  - ./gradlew build --refresh-dependencies
+  
+after_failure:
+  - ls
+  - ls external_dependencies
+  - ls external_dependencies/cpp
+  - ls external_dependencies/cpp/wpilibc
+  - ls external_dependencies/cpp/wpilibc/include
+
+
