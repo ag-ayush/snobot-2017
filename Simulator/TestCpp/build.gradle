@@ -13,8 +13,8 @@ else
 }
 
 ext.wpilibBuildPath      = "${rootDir}/external_dependencies/wpilibSim"
-ext.snobotSimCppSources  = "${rootDir}/external_dependencies/snobotSimCppSources"
-ext.snobotSimNativeLibs  = "${rootDir}/external_dependencies/snobotSimLibrary"
+ext.snobotSimCppSources  = "${rootDir}/external_dependencies/snobotSim"
+ext.snobotSimNativeLibs  = "${rootDir}/external_dependencies/snobotSim"
 
 ext.wpilibcIncludePath       = wpilibBuildPath + "/cpp/wpilibc/include"
 ext.halIncludePath           = wpilibBuildPath + "/cpp/hal/include"
@@ -101,15 +101,15 @@ task download_sim_tools(type: Copy) {
         
         dependencies {
             zippedDeps 'edu.wpilib:wpilibSim:1.0'
-            zippedDeps 'com.snobot:snobotSimCppSources:1.0'
-            zippedDeps 'com.snobot:snobotSimLibrary-windows:1.0'
+            zippedDeps 'com.snobot.simulator:snobotSim:1.0:cpp-sources@zip'
+            zippedDeps 'com.snobot.simulator:snobotSim:1.0:NativeCpp-windows@zip'
         }
         
         configurations.zippedDeps.files.each { file ->
         
             copy {
 	            def depName = file.name.substring(0, file.name.indexOf('-'))
-	            println file
+	            println file.toString() + ", " + depName
 	            from zipTree(file) 
 	            into output_folder.toString() + "/" + depName
             }
@@ -163,7 +163,11 @@ model {
                     {
                         srcDirs = ["src", niLibrariesIncludePath, niLibrariesIncludePath, halIncludePath, wpilibcIncludePath, wpiIncludePath, networkTablesIncludePath]
                         srcDirs += ext.user_includes
-                        println srcDirs
+                        
+                        srcDirs.each {
+                            println it
+                        }
+                        //println srcDirs
                     }
                 }
             }
