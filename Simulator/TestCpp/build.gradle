@@ -100,9 +100,15 @@ task download_sim_tools(type: Copy) {
         configurations.create("zippedDeps")
         
         dependencies {
-            zippedDeps 'edu.wpilib:wpilibSim:1.0'
             zippedDeps 'com.snobot.simulator:snobotSim:1.0:cpp-sources@zip'
-            zippedDeps 'com.snobot.simulator:snobotSim:1.0:NativeCpp-windows@zip'
+            
+            if (OperatingSystem.current().isWindows()) {
+                zippedDeps 'edu.wpilib:wpilibSim:1.0'
+                zippedDeps 'com.snobot.simulator:snobotSim:1.0:NativeCpp-windows@zip'
+            } else if (OperatingSystem.current().isLinux()) {
+                zippedDeps 'edu.wpilib:wpilibSim:1.0:linux@zip'
+                zippedDeps 'com.snobot.simulator:snobotSim:1.0:NativeCpp-linux@zip'
+            }
         }
         
         configurations.zippedDeps.files.each { file ->
