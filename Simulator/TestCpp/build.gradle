@@ -100,15 +100,11 @@ task download_sim_tools(type: Copy) {
         configurations.create("zippedDeps")
         
         dependencies {
+            def osname = org.gradle.internal.os.OperatingSystem.current().getFamilyName();
+
             zippedDeps 'com.snobot.simulator:snobotSim:1.0:cpp-sources@zip'
-            
-            if (OperatingSystem.current().isWindows()) {
-                zippedDeps 'edu.wpilib:wpilibSim:1.0'
-                zippedDeps 'com.snobot.simulator:snobotSim:1.0:NativeCpp-windows@zip'
-            } else if (OperatingSystem.current().isLinux()) {
-                zippedDeps 'edu.wpilib:wpilibSim:1.0:linux@zip'
-                zippedDeps 'com.snobot.simulator:snobotSim:1.0:NativeCpp-linux@zip'
-            }
+            zippedDeps 'com.snobot.simulator:snobotSim:1.0:NativeCpp-' + osname + '@zip'
+            zippedDeps 'edu.wpilib:wpilibSim:1.0:' + osname + "@zip"
         }
         
         configurations.zippedDeps.files.each { file ->
