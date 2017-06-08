@@ -1,8 +1,11 @@
 
+
+
 plugins {
     id 'java'
     id 'edu.wpi.first.wpilib.versioning.WPILibVersioningPlugin' version '1.5.1'
     id 'application'
+    id 'maven-publish'
 }
 
 
@@ -12,6 +15,12 @@ repositories {
     maven {
         url "http://raw.githubusercontent.com/pjreiniger/maven_repo/master/"
     }
+}
+
+ext.publishing_path = '/home/pj/GitHub/FIRST/2017/maven_repo/'
+if(hasProperty('maven_repo'))
+{
+    ext.publishing_path = maven_repo
 }
 
 sourceSets {
@@ -84,6 +93,25 @@ distributions {
         }
     }
     
+}
+
+publishing {
+
+   repositories {
+      maven {
+      	url publishing_path
+      }
+   }
+	
+   publications {
+      create(MavenPublication ) {
+         artifact distZip
+         
+         groupId 'com.snobot.simulator'
+         artifactId 'Simulator'
+         version '1.0'
+      }
+   }
 }
 
 mainClassName = "com.snobot.simulator.Main"
