@@ -10,7 +10,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/SnobotRobotLibs"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/CTRLib.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/json-simple-1.1.1.jar"/>
-	<classpathentry kind="var" path="USERLIBS_DIR/RIOdroid.jar"/>
+	<classpathentry kind="var" path="USERLIBS_DIR/RioDroid.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
