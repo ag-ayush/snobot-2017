@@ -43,6 +43,7 @@ dependencies {
     compile    'com.snobot.simulator:snobotSim:1.0'
     compile    'com.snobot.simulator:snobotSim:1.0:gui'
     compile    'com.snobot.simulator:snobotSim:1.0:NativeJava-windows'
+    compile    'com.snobot.simulator:snobotSim:1.0:NativeJava-linux'
     zippedDeps 'com.snobot.simulator:snobotSim:1.0:javadeps@zip'
     
     // 3rd Party
@@ -62,6 +63,15 @@ configurations.zippedDeps.files.each { file ->
         into "dependencies/"
         
         exclude "jinput-platform*.jar"
+    }
+}
+
+configurations.compile.files.each { file ->
+
+    copy {
+        from file
+        into "dependencies/"
+        include "snobotSim*"
     }
 }
 
