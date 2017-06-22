@@ -1,35 +1,22 @@
 
-motor_sim: &drivetrain_motor_sim_config 
-  type : StaticLoad
-  load : .6 # Random guess
-  conversion_factor: 2.43 # 6 inch wheels / 2 * .81 loss factor
-  motor_model: 
-    motor_factory_func: com.snobot.simulator.motor_sim.motors.VexMotorFactory.makeCIMMotor
-    transmission:
-      num_motors     : 2
-      gear_reduction : 11.43
-      efficiency     : 1
-
-
 simulate_camera: True
 
 speed_controllers:
 - name: Left Motor (A)
   handle: com.snobot2017.PortMappings2017.sDRIVE_CAN_LEFT_A_PORT
-  motor_sim: *drivetrain_motor_sim_config
-  
+
   motor_sim:
     type : StaticLoad
     load : .6 # Random guess
     conversion_factor: 2.43 # 6 inch wheels / 2 * .81 loss factor
     motor_model: 
-      motor_factory_func: com.snobot.simulator.motor_sim.motors.VexMotorFactory.makeCIMMotor
+      motor_type: CIM
       transmission:
         num_motors     : 2
         gear_reduction : 11.43
         efficiency     : 1
   
-- name: Right Motor
+- name: Right Motor (A)
   handle: com.snobot2017.PortMappings2017.sDRIVE_CAN_RIGHT_A_PORT
   
   motor_sim:
@@ -38,7 +25,7 @@ speed_controllers:
     conversion_factor: 2.43 # 6 inch wheels / 2 * .81 loss factor
     motor_model: 
       inverted: True
-      motor_factory_func: com.snobot.simulator.motor_sim.motors.VexMotorFactory.makeCIMMotor
+      motor_type: CIM
       transmission:
         num_motors     : 2
         gear_reduction : 11.43

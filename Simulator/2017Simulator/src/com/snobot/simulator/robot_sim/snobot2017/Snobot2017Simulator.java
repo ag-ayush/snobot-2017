@@ -3,7 +3,7 @@ package com.snobot.simulator.robot_sim.snobot2017;
 import java.util.Map;
 
 import com.snobot.simulator.ASimulator;
-import com.snobot.simulator.SimulatorConfigReader;
+import com.snobot.simulator.config.SimulatorConfigReader;
 import com.snobot2017.PortMappings2017;
 
 public class Snobot2017Simulator extends ASimulator
