@@ -40,11 +40,11 @@ configurations {
 dependencies {
     
     // Snobot Sim
-    compile    'com.snobot.simulator:snobotSim:1.0'
-    compile    'com.snobot.simulator:snobotSim:1.0:gui'
-    compile    'com.snobot.simulator:snobotSim:1.0:NativeJava-windows'
-    compile    'com.snobot.simulator:snobotSim:1.0:NativeJava-linux'
-    zippedDeps 'com.snobot.simulator:snobotSim:1.0:javadeps@zip'
+    compile    'com.snobot.simulator:snobotSim:0.0'
+    compile    'com.snobot.simulator:snobotSim:0.0:gui'
+    compile    'com.snobot.simulator:snobotSim:0.0:NativeJava-windows'
+    compile    'com.snobot.simulator:snobotSim:0.0:NativeJava-linux'
+    zippedDeps 'com.snobot.simulator:snobotSim:0.0:javadeps@zip'
     
     // 3rd Party
     compile 'com.googlecode.json-simple:json-simple:1.1.1'

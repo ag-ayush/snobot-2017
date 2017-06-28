@@ -1,0 +1,43 @@
+speed_controllers:
+- name: Right Drive (B)
+  handle: 1
+- name: Right Drive (A)
+  handle: 2
+- name: Conveyor Motor
+  handle: 3
+- name: Right Arm Motor
+  handle: 4
+- name: Left Shooter Motor
+  handle: 5
+- name: Right Shooter Motor
+  handle: 6
+- name: Turret Motor
+  handle: 7
+- name: Left Arm Motor
+  handle: 8
+- name: Intake Motor
+  handle: 9
+- name: Left Drive (A)
+  handle: 10
+- name: Left Drive (B)
+  handle: 11
+quad_encoders:
+- name: Encoder (1, 0)
+  handle: 256
+- name: Encoder (2, 3)
+  handle: 515
+- name: Encoder (9, 8)
+  handle: 2312
+solenoids:
+- name: Popper Shooter (B)
+  handle: 1
+- name: Popper Hold (B)
+  handle: 2
+- name: Shooter Hood (A)
+  handle: 3
+- name: Shooter (B)
+  handle: 4
+- name: Popper Hold (A)
+  handle: 5
+- name: Popper Shooter (A)
+  handle: 6
