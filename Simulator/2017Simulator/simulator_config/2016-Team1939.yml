@@ -40,4 +40,9 @@ quad_encoders:
   single_handle: -268435437
 relays:
 - name: Magnet
-  handle: 0
+  handle: 33554688
+digital:
+- name: Digital Source0
+  handle: 33554688
+- name: Digital Source1
+  handle: 33554689

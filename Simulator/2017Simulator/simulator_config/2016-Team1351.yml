@@ -47,32 +47,30 @@ speed_controllers:
 quad_encoders:
 - name: Drive Left
   single_handle: -268435456
-  speed_controller_handle: 0
 - name: Drive Right
   single_handle: -268435454
-  speed_controller_handle: 2
 - name: Shooter
   single_handle: -268435452
-  speed_controller_handle: 4
-- name: CAN Encoder 6
-  single_handle: -268435450
-- name: CAN Encoder 7
-  single_handle: -268435449
-- name: CAN Encoder 8
-  single_handle: -268435448
 relays:
 - name: Light
-  handle: 3
+  handle: 33554691
 solenoids:
 - name: Intake (A)
-  handle: 1
+  handle: 33554433
 - name: Shifter (A)
-  handle: 2
+  handle: 33554434
 - name: Porky (A)
-  handle: 3
+  handle: 33554435
 - name: Intake (B)
-  handle: 5
+  handle: 33554437
 - name: Shifter (B)
-  handle: 6
+  handle: 33554438
 - name: Porky (B)
-  handle: 7
+  handle: 33554439
+digital:
+- name: Digital Source0
+  handle: 33554688
+- name: Digital Source1
+  handle: 33554689
+- name: Digital Source2
+  handle: 33554690

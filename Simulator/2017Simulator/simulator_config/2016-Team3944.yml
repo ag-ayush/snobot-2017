@@ -48,4 +48,11 @@ quad_encoders:
   speed_controller_handle: 21
 relays:
 - name: Shooter Light
-  handle: 0
+  handle: 33554688
+digital:
+- name: Digital Source0
+  handle: 33554688
+- name: Digital Source1
+  handle: 33554689
+- name: Digital Source4
+  handle: 33554692

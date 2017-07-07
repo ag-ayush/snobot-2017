@@ -1,6 +1,6 @@
 speed_controllers:
 - name: Lidar Servo
-  handle: 0
+  handle: 33554688
   motor_sim:
     type: Simple
     max_speed: 0.0
@@ -51,10 +51,10 @@ speed_controllers:
     max_speed: 0.0
 solenoids:
 - name: Shifter (A)
-  handle: 0
+  handle: 33554432
 - name: Intake (A)
-  handle: 1
+  handle: 33554433
 - name: Shifter (B)
-  handle: 2
+  handle: 33554434
 - name: Intake (B)
-  handle: 3
+  handle: 33554435

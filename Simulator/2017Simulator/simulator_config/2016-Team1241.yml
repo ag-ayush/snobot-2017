@@ -23,21 +23,42 @@ speed_controllers:
   handle: 11
 quad_encoders:
 - name: Encoder (1, 0)
-  handle: 256
+  single_handle: 33620480
 - name: Encoder (2, 3)
-  handle: 515
+  single_handle: 33620739
 - name: Encoder (9, 8)
-  handle: 2312
+  single_handle: 33622536
 solenoids:
 - name: Popper Shooter (B)
-  handle: 1
+  handle: 33557505
 - name: Popper Hold (B)
-  handle: 2
+  handle: 33557506
 - name: Shooter Hood (A)
-  handle: 3
+  handle: 33557507
 - name: Shooter (B)
-  handle: 4
+  handle: 33557508
 - name: Popper Hold (A)
-  handle: 5
+  handle: 33557509
 - name: Popper Shooter (A)
-  handle: 6
+  handle: 33557510
+digital:
+- name: Digital Source0
+  handle: 33554688
+- name: Digital Source1
+  handle: 33554689
+- name: Digital Source2
+  handle: 33554690
+- name: Digital Source3
+  handle: 33554691
+- name: Digital Source4
+  handle: 33554692
+- name: Digital Source5
+  handle: 33554693
+- name: Digital Source6
+  handle: 33554694
+- name: Digital Source7
+  handle: 33554695
+- name: Digital Source8
+  handle: 33554696
+- name: Digital Source9
+  handle: 33554697
