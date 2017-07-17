@@ -150,6 +150,7 @@ model {
                     linker.args  networkTablesLibraryPath
                     linker.args  wpilibLibraryPath
                     linker.args  canTalonLibraryPath
+                    linker.args  canTalonCppLibraryPath
                 }
             }
             sources 

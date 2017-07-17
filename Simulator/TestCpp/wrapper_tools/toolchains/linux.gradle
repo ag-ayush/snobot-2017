@@ -55,6 +55,8 @@ def defineExternalLibraries() {
     ext.wpilibLibraryPath        = wpilibBuildPath     + '/native/shared/amd64/libwpiutil.so'
     ext.halLibraryPath           = snobotSimNativeLibs + '/native/shared/x64/libHALAthena.so'
     ext.canTalonLibraryPath      = snobotSimNativeLibs + '/native/shared/x64/libCTRLibDriver.so'
+    ext.canTalonCppLibraryPath   = snobotSimNativeLibs + '/native/shared/x64/libCtrCpp.so'
+
 }
 
 ext
