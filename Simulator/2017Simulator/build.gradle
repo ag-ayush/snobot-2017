@@ -40,19 +40,22 @@ configurations {
 dependencies {
     
     // Snobot Sim
-    compile    'com.snobot.simulator:snobotSim:0.0'
-    compile    'com.snobot.simulator:snobotSim:0.0:gui'
-    compile    'com.snobot.simulator:snobotSim:0.0:NativeJava-windows'
-    compile    'com.snobot.simulator:snobotSim:0.0:NativeJava-linux'
-    zippedDeps 'com.snobot.simulator:snobotSim:0.0:javadeps@zip'
+    //compile    'com.snobot.simulator:snobotSim:0.1'
+    //compile    'com.snobot.simulator:snobotSim:0.1:gui'
+    //compile    'com.snobot.simulator:snobotSim:0.1:NativeJava-windows'
+    //compile    'com.snobot.simulator:snobotSim:0.1:NativeJava-linux'
+    //zippedDeps 'com.snobot.simulator:snobotSim:0.1:javadeps@zip'
     
-    // 3rd Party
-    compile 'com.googlecode.json-simple:json-simple:1.1.1'
-    //compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/RIOdroid.jar")
+    //// 3rd Party
+    //compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    ////compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/RIOdroid.jar")
     //compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/CTRLib.jar")
-
-    // WPI Stuff
-    compile fileTree(dir: 'dependencies', include: '*.jar')
+    //compile files(System.getProperty("user.home") + "/wpilib/java/current/lib/cscore.jar")
+    //
+    //// WPI Stuff
+    //compile fileTree(dir: 'dependencies', include: '*.jar')
+    //compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/strongback.jar")
+    //compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/navx_frc.jar")
 }
 
 configurations.zippedDeps.files.each { file ->
