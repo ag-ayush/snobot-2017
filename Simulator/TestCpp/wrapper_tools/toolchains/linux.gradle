@@ -47,3 +47,20 @@ model {
         }
     }
 }
+
+
+def defineExternalLibraries() {
+    output = []
+    output << "external_dependencies/lib/ntcore.so"
+    output << "external_dependencies/lib/wpilibc.so"
+    output << "external_dependencies/lib/wpiutil.so"
+    
+    return output
+}
+
+ext
+{
+    defineExternalLibraries = this.&defineExternalLibraries
+
+}
+

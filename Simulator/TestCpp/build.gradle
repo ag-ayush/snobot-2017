@@ -72,28 +72,24 @@ task download_sim_tools(type: Copy) {
         repositories {
             maven {
                 url "http://raw.githubusercontent.com/pjreiniger/maven_repo/master/"
-                url "http://first.wpi.edu/FRC/roborio/maven/development/"
             }
         }
         
-        configurations.create("zippedHeaders")
+        configurations.create("zippedDeps")
         
         dependencies {
             def osname = org.gradle.internal.os.OperatingSystem.current().getFamilyName();
 
-            zippedHeaders 'edu.wpi.first.hal:hal:+:headers@zip'
-            zippedHeaders 'edu.wpi.first.wpilibc:wpilibc:+:headers@zip'
-            zippedHeaders 'edu.wpi.first.wpiutil:wpiutil-cpp:+:headers@zip'
-            zippedHeaders 'edu.wpi.first.ntcore:ntcore-cpp:+:headers@zip'
+            zippedDeps   'com.snobot.simulator:wpilib:+:wpi_headers@zip'
+            zippedDeps 'com.snobot.simulator:wpilib:+:wpi_native-' + osname + '@zip'
         }
         
-        configurations.zippedHeaders.files.each { file ->
+        configurations.zippedDeps.files.each { file ->
         
             copy {
 	            def depName = file.name.substring(0, file.name.indexOf('-'))
-	            println file.toString() + ", " + depName
 	            from zipTree(file) 
-	            into output_folder.toString() + "/include/" + depName
+	            into output_folder.toString()
             }
         }
     }   
@@ -118,13 +114,23 @@ model {
 
             setupJniIncludes(binaries)
             
-            binaries.all 
+            binaries
             {
-                tasks.withType(CppCompile) 
-                {
-                    dependsOn download_sim_tools
-                    dependsOn generateCppRobotWrapper
-                    dependsOn generateWrapperJavaJni
+                all {
+                    tasks.withType(CppCompile) 
+                    {
+                        dependsOn download_sim_tools
+                        dependsOn generateCppRobotWrapper
+                        dependsOn generateWrapperJavaJni
+                        
+                        defineExternalLibraries().each {
+                            println it
+                            linker.args  it
+                        }
+                    }
+                }
+                withType(StaticLibraryBinarySpec) {
+                   it.buildable = false
                 }
             }
             sources 
@@ -139,10 +145,7 @@ model {
                     exportedHeaders 
                     {
                         srcDirs = ["src"]
-                        srcDirs += "external_dependencies/include/hal"
-                        srcDirs += "external_dependencies/include/ntcore"
-                        srcDirs += "external_dependencies/include/wpilibc"
-                        srcDirs += "external_dependencies/include/wpiutil"
+                        srcDirs += "external_dependencies/include/"
                         srcDirs.each {
                             println it
                         }
