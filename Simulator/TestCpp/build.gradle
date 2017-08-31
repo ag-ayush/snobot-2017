@@ -12,28 +12,6 @@ else
     apply from: "wrapper_tools/toolchains/windows.gradle"
 }
 
-ext.wpilibBuildPath      = "${rootDir}/external_dependencies/wpilibSim"
-ext.snobotSimCppSources  = "${rootDir}/external_dependencies/snobotSim"
-ext.snobotSimNativeLibs  = "${rootDir}/external_dependencies/snobotSim"
-
-ext.wpilibcIncludePath       = wpilibBuildPath + "/cpp/wpilibc/include"
-ext.halIncludePath           = wpilibBuildPath + "/cpp/hal/include"
-ext.wpiIncludePath           = wpilibBuildPath + "/cpp/wpiutil/include"
-ext.networkTablesIncludePath = wpilibBuildPath + "/cpp/networktables/include"
-ext.niLibrariesIncludePath   = wpilibBuildPath + "/cpp/ni-libraries/include"
-
-if(false)
-{
-    ext.user_includes   = [System.getProperty("user.home") + "/wpilib/user/cpp/include"]
-}
-else
-{
-    ext.user_includes   = [snobotSimCppSources]
-}
-    
-
-defineExternalLibraries()
-
 
 ext.robotName = "Robot"
 
@@ -94,26 +72,28 @@ task download_sim_tools(type: Copy) {
         repositories {
             maven {
                 url "http://raw.githubusercontent.com/pjreiniger/maven_repo/master/"
+                url "http://first.wpi.edu/FRC/roborio/maven/development/"
             }
         }
         
-        configurations.create("zippedDeps")
+        configurations.create("zippedHeaders")
         
         dependencies {
             def osname = org.gradle.internal.os.OperatingSystem.current().getFamilyName();
 
-            zippedDeps 'com.snobot.simulator:snobotSim:0.0:cpp-sources@zip'
-            zippedDeps 'com.snobot.simulator:snobotSim:0.0:NativeCpp-' + osname + '@zip'
-            zippedDeps 'edu.wpilib:wpilibSim:0.0:' + osname + "@zip"
+            zippedHeaders 'edu.wpi.first.hal:hal:+:headers@zip'
+            zippedHeaders 'edu.wpi.first.wpilibc:wpilibc:+:headers@zip'
+            zippedHeaders 'edu.wpi.first.wpiutil:wpiutil-cpp:+:headers@zip'
+            zippedHeaders 'edu.wpi.first.ntcore:ntcore-cpp:+:headers@zip'
         }
         
-        configurations.zippedDeps.files.each { file ->
+        configurations.zippedHeaders.files.each { file ->
         
             copy {
 	            def depName = file.name.substring(0, file.name.indexOf('-'))
 	            println file.toString() + ", " + depName
 	            from zipTree(file) 
-	            into output_folder.toString() + "/" + depName
+	            into output_folder.toString() + "/include/" + depName
             }
         }
     }   
@@ -145,12 +125,6 @@ model {
                     dependsOn download_sim_tools
                     dependsOn generateCppRobotWrapper
                     dependsOn generateWrapperJavaJni
-                    linker.args  wpilibcLibraryPath
-                    linker.args  halLibraryPath
-                    linker.args  networkTablesLibraryPath
-                    linker.args  wpilibLibraryPath
-                    linker.args  canTalonLibraryPath
-                    linker.args  canTalonCppLibraryPath
                 }
             }
             sources 
@@ -159,14 +133,16 @@ model {
                 {
                     source 
                     {
-                        srcDirs = ["src", "build/wrapperSource/src", halIncludePath, wpilibcIncludePath]
+                        srcDirs = ["src", "build/wrapperSource/src"]
                         includes = ["**/*.cpp"]
                     }
                     exportedHeaders 
                     {
-                        srcDirs = ["src", niLibrariesIncludePath, niLibrariesIncludePath, halIncludePath, wpilibcIncludePath, wpiIncludePath, networkTablesIncludePath]
-                        srcDirs += ext.user_includes
-                        
+                        srcDirs = ["src"]
+                        srcDirs += "external_dependencies/include/hal"
+                        srcDirs += "external_dependencies/include/ntcore"
+                        srcDirs += "external_dependencies/include/wpilibc"
+                        srcDirs += "external_dependencies/include/wpiutil"
                         srcDirs.each {
                             println it
                         }

@@ -28,7 +28,7 @@ sourceSets {
     {
         java
         {
-            srcDirs = ["${rootDir}/src", "${rootDir}/../../RobotCode/snobot2017/src", "${rootDir}/../../RobotCode/SnobotRobotLibs/src"]
+            srcDirs = ["${rootDir}/../../RobotCode/snobot2017/src", "${rootDir}/../../RobotCode/SnobotRobotLibs/src"]
         }
     }
 }
@@ -41,8 +41,8 @@ dependencies {
     
     // Snobot Sim
     compile    'com.snobot.simulator:snobot_sim_gui:0.1:gui'
-    compile    'com.snobot.simulator:snobot_sim_gui:0.1:native-linux'
-    compile    'com.snobot.simulator:snobot_sim_gui:0.1:native-windows'
+    compile    'com.snobot.simulator:snobot_sim_native:0.1:uber_native-linux'
+    compile    'com.snobot.simulator:snobot_sim_native:0.1:uber_native-windows'
     zippedDeps 'com.snobot.simulator:snobot_sim_gui:0.1:javadeps@zip'
     
     //// 3rd Party
@@ -71,10 +71,12 @@ configurations.zippedDeps.files.each { file ->
 }
 
 configurations.compile.files.each { file ->
+    println "Compile dependency: " + file
     copy {
         from file
         into "dependencies/"
-        include "snobot_sim_gui*"
+        include "snobot_sim*"
+        include "ctre_override*"
     }
 }
 

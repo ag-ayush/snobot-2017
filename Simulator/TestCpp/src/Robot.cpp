@@ -37,19 +37,19 @@ void Robot::RobotInit()
     // Drive Train
     if (useCan)
     {
-        std::shared_ptr<CANTalon> driveLeftMotorA(new CANTalon(0));
-        std::shared_ptr<CANTalon> driveLeftMotorB(new CANTalon(1));
-        driveLeftMotorA->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
-        driveLeftMotorB->SetTalonControlMode(CANTalon::TalonControlMode::kFollowerMode);
-        driveLeftMotorB->Set(driveLeftMotorA->GetDeviceID());
-
-        std::shared_ptr<CANTalon> driveRightMotorA(new CANTalon(2));
-        std::shared_ptr<CANTalon> driveRightMotorB(new CANTalon(3));
-        driveRightMotorA->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
-        driveRightMotorB->SetTalonControlMode(CANTalon::TalonControlMode::kFollowerMode);
-        driveRightMotorB->Set(driveRightMotorA->GetDeviceID());
-
-        mDrivetrain = std::shared_ptr<IDrivetrain>(new SnobotCanDrivetrain(driveLeftMotorA, driveRightMotorB, driverJoystick));
+//        std::shared_ptr<CANTalon> driveLeftMotorA(new CANTalon(0));
+//        std::shared_ptr<CANTalon> driveLeftMotorB(new CANTalon(1));
+//        driveLeftMotorA->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
+//        driveLeftMotorB->SetTalonControlMode(CANTalon::TalonControlMode::kFollowerMode);
+//        driveLeftMotorB->Set(driveLeftMotorA->GetDeviceID());
+//
+//        std::shared_ptr<CANTalon> driveRightMotorA(new CANTalon(2));
+//        std::shared_ptr<CANTalon> driveRightMotorB(new CANTalon(3));
+//        driveRightMotorA->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
+//        driveRightMotorB->SetTalonControlMode(CANTalon::TalonControlMode::kFollowerMode);
+//        driveRightMotorB->Set(driveRightMotorA->GetDeviceID());
+//
+//        mDrivetrain = std::shared_ptr<IDrivetrain>(new SnobotCanDrivetrain(driveLeftMotorA, driveRightMotorB, driverJoystick));
     }
     else
     {

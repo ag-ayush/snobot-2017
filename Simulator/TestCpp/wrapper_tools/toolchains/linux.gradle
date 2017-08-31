@@ -47,21 +47,3 @@ model {
         }
     }
 }
-
-
-def defineExternalLibraries() {
-    ext.wpilibcLibraryPath       = wpilibBuildPath     + '/native/shared/x64/libwpilibc.so'
-    ext.networkTablesLibraryPath = wpilibBuildPath     + '/native/shared/amd64/libntcore.so'
-    ext.wpilibLibraryPath        = wpilibBuildPath     + '/native/shared/amd64/libwpiutil.so'
-    ext.halLibraryPath           = snobotSimNativeLibs + '/native/shared/x64/libHALAthena.so'
-    ext.canTalonLibraryPath      = snobotSimNativeLibs + '/native/shared/x64/libCTRLibDriver.so'
-    ext.canTalonCppLibraryPath   = snobotSimNativeLibs + '/native/shared/x64/libCtrCpp.so'
-
-}
-
-ext
-{
-    defineExternalLibraries = this.&defineExternalLibraries
-
-}
-
