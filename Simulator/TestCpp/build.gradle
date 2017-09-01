@@ -27,7 +27,7 @@ apply plugin: 'edu.wpi.first.NativeUtils'
 apply plugin: 'java'
 
 apply from: 'config.gradle'
-apply from: 'wrapper_tools/toolchains/build_simulator.gradle'
+apply from: 'wrapper_tools/build_simulator.gradle'
 
 
 model {
