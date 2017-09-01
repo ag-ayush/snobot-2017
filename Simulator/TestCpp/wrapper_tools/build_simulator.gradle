@@ -1,0 +1,8 @@
+
+
+ext.robotName = "Robot"
+
+apply from: "wrapper_tools/toolchains/get_dependencies.gradle"
+apply from: "wrapper_tools/compile_java.gradle"
+
+build.dependsOn download_sim_tools
