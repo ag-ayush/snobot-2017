@@ -9,10 +9,8 @@ import org.json.simple.JSONObject;
 
 import com.snobot.lib.Utilities;
 import com.snobot.simulator.ISimulatorUpdater;
-import com.snobot.simulator.jni.RobotStateSingletonJni;
 import com.snobot.simulator.robot_container.IRobotClassContainer;
 import com.snobot.simulator.robot_container.JavaRobotContainer;
-import com.snobot2017.Snobot2017;
 import com.snobot2017.positioner.IPositioner;
 
 public class CameraSimulator implements ISimulatorUpdater
@@ -87,8 +85,10 @@ public class CameraSimulator implements ISimulatorUpdater
 
     public CameraSimulator()
     {
-        mLoopsBetweenUpdates = (int) Math.ceil((1.0 / sFRAMES_PER_SECOND) / RobotStateSingletonJni.getCycleTime());
-        mLoopsStale = (int) Math.ceil((sLATENCY_MS * 1e-3) / RobotStateSingletonJni.getCycleTime());
+        // double loopTime = RobotStateSingletonJni.getCycleTime();
+        double loopTime = .02;
+        mLoopsBetweenUpdates = (int) Math.ceil((1.0 / sFRAMES_PER_SECOND) / loopTime);
+        mLoopsStale = (int) Math.ceil((sLATENCY_MS * 1e-3) / loopTime);
         mRobotPositionHistory = new TreeMap<>();
         mLoopCtr = 0;
 
@@ -218,7 +218,8 @@ public class CameraSimulator implements ISimulatorUpdater
     public void setRobot(IRobotClassContainer aRobot)
     {
         JavaRobotContainer container = (JavaRobotContainer) aRobot;
-        mPositioner = ((Snobot2017) container.getJavaRobot()).getPositioner();
+        // mPositioner = ((Snobot2017)
+        // container.getJavaRobot()).getPositioner();
     }
 
 }

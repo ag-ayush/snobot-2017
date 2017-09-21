@@ -136,8 +136,8 @@ public class AutonomousFactory
         };
         
         mAutoModeTable.addTableListener(SmartDashBoardNames.sSAVE_AUTON, saveListener, true);
-        mAutonModeChooser.getTable().addTableListener(buildAutonListener);
-        mPositionChooser.getTable().addTableListener(setPositionListener);
+        // mAutonModeChooser.getTable().addTableListener(buildAutonListener);
+        // mPositionChooser.getTable().addTableListener(setPositionListener);
     }
 
     private void setPosition()

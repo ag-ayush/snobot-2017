@@ -10,7 +10,7 @@ public class Snobot2017Simulator extends ASimulator
 {
     private class Snobot2017ConfigReader extends SimulatorConfigReader
     {
-        public void loadConfig(String aConfigFile)
+        public boolean loadConfig(String aConfigFile)
         {
             if (aConfigFile != null)
             {
@@ -23,7 +23,7 @@ public class Snobot2017Simulator extends ASimulator
                 configFile = "simulator_config/snobot2017_WithCan.yml";
             }
 
-            super.loadConfig(configFile);
+            return super.loadConfig(configFile);
         }
 
         @Override
@@ -44,7 +44,7 @@ public class Snobot2017Simulator extends ASimulator
             if (simulateCamera)
             {
                 CameraSimulator cameraSimulator = new CameraSimulator();
-                mSimulatorComponenets.add(cameraSimulator);
+                // mSimulatorComponenets.add(cameraSimulator);
             }
         }
     }
