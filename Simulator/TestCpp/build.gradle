@@ -1,0 +1,74 @@
+import edu.wpi.first.nativeutils.NativeUtils
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'gradle.plugin.edu.wpi.first:native-utils:1.2.9'
+        classpath 'gradle.plugin.edu.wpi.first.wpilib.versioning:wpilib-version-plugin:1.6'
+    }
+}
+
+ext.getClassifier = { binary->
+    return NativeUtils.getClassifier(binary)
+}
+
+ext.getPlatformPath = { binary->
+    return NativeUtils.getPlatformPath(binary)
+}
+
+apply plugin: 'cpp'
+apply plugin: 'visual-studio'
+apply plugin: 'edu.wpi.first.NativeUtils'
+apply plugin: 'java'
+
+apply from: 'config.gradle'
+apply from: 'wrapper_tools/build_simulator.gradle'
+
+
+model {
+    
+    components {
+        CppTest(NativeLibrarySpec) {
+            binaries
+            {
+                all {
+                    tasks.withType(CppCompile)  {
+                        FileTree tree = fileTree("${rootDir}/external_dependencies/lib")
+                        tree.include("*.lib")
+                        tree.include("*.so")
+                        
+                        tree.each {File file ->
+                            linker.args file.toString()
+                        }
+                    }
+                }
+                withType(StaticLibraryBinarySpec) {
+                    it.buildable = false
+                }
+            }
+            
+            sources {
+                cpp {
+                    source {
+                        srcDirs = [ "src", "build/wrapperSource/src" ]
+                        includes = ["**/*.cpp"]
+                    }
+                    exportedHeaders {
+                        srcDirs = ["src"]
+                        srcDirs += "external_dependencies/include/"
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1'
+}

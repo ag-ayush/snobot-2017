@@ -5,11 +5,9 @@ import com.snobot.lib.PropertyManager.DoubleProperty;
 import com.snobot.lib.PropertyManager.IntegerProperty;
 import com.snobot.lib.PropertyManager.StringProperty;
 
-import edu.wpi.first.wpilibj.RobotBase;
-
 public class Properties2017
 {
-    public static final boolean sKILL_OLD_ADBS = false;
+    public static final boolean sKILL_OLD_ADBS = true;
 
     // **************************************************************
     // Configuration Constants
@@ -70,11 +68,6 @@ public class Properties2017
     public static final DoubleProperty sDRIVE_PATH_WITH_GYRO_KP = new DoubleProperty("DrivePathWithGyroKP", 0.01);
     public static final DoubleProperty sSIDE_AUTO_TURN_SPEED = new DoubleProperty("SideAutoTurnSpeed", 0.1);
 
-    // Starting Positions
-    public static final double sBOILER_X_OFFSET = 135;
-    public static final double sLOADING_X_OFFSET = 135;
-    public static final double sFIELD_LENGTH = 324;
-
     static
     {
         String logPath;
@@ -83,7 +76,7 @@ public class Properties2017
         String replayPath;
         String autoLogPath;
 
-        if (RobotBase.isSimulation())
+        if (true)
         {
             logPath = "logs/" + Properties2017.class.getCanonicalName() + "/";
             adbLocation = System.getProperty("user.home") + "/AppData/Local/Android/sdk/platform-tools/adb.exe";

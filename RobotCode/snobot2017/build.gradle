@@ -1,0 +1,66 @@
+
+
+plugins {
+    id 'java'
+    id 'edu.wpi.first.wpilib.versioning.WPILibVersioningPlugin' version '1.5.1'
+    id 'maven-publish'
+}
+
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "http://raw.githubusercontent.com/pjreiniger/maven_repo/master/"
+    }
+}
+
+sourceSets {
+    main
+    {
+        java
+        {
+            srcDirs = ["${rootDir}/src", "${rootDir}/snobot2017/src", "${rootDir}/../SnobotRobotLibs/src"]
+        }
+    }
+}
+
+dependencies {
+    // WPILib
+    compile 'edu.wpi.first.wpilibj:athena:+'
+    compile 'edu.wpi.first.wpilib.networktables.java:NetworkTables:+:desktop'
+    
+    // 3rd Party
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/RIOdroid.jar")
+    compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/CTRLib.jar")
+}
+
+
+jar {
+    dependsOn { classes }
+}
+
+// Publishing
+ext.publishing_path = '/home/pj/GitHub/FIRST/2017/maven_repo/'
+if(hasProperty('maven_repo'))
+{
+    ext.publishing_path = maven_repo
+}
+
+publishing {
+
+   repositories {
+      maven {
+        url publishing_path
+      }
+   }
+    
+   publications {
+      create(MavenPublication ) {
+         groupId 'com.snobot.robot'
+         artifactId 'Snobot2017'
+         version '1.0'
+      }
+   }
+}

@@ -1,62 +1,58 @@
 package com.snobot.simulator.robot_sim.snobot2017;
 
+import java.util.Map;
+
 import com.snobot.simulator.ASimulator;
-import com.snobot.simulator.SensorActuatorRegistry;
-import com.snobot.simulator.module_wrapper.AnalogWrapper;
-import com.snobot.simulator.module_wrapper.EncoderWrapper;
-import com.snobot.simulator.module_wrapper.SpeedControllerWrapper;
-import com.snobot.simulator.module_wrapper.TankDriveGyroSimulator;
-import com.snobot.simulator.motor_sim.DcMotorModel;
-import com.snobot.simulator.motor_sim.StaticLoadDcMotorSim;
-import com.snobot.simulator.motor_sim.motors.MakeTransmission;
-import com.snobot.simulator.motor_sim.motors.VexMotorFactory;
+import com.snobot.simulator.config.SimulatorConfigReader;
 import com.snobot2017.PortMappings2017;
 
 public class Snobot2017Simulator extends ASimulator
 {
-    private static final boolean sSIMULATE_CAMERA = true;
-
-    public Snobot2017Simulator()
+    private class Snobot2017ConfigReader extends SimulatorConfigReader
     {
+        public boolean loadConfig(String aConfigFile)
+        {
+            if (aConfigFile != null)
+            {
+                System.out.println("Ignoring provided config file, doing custom thing...");
+            }
 
+            String configFile = "simulator_config/snobot2017_NoCan.yml";
+            if (PortMappings2017.sUSE_CAN_DRIVETRAIN)
+            {
+                configFile = "simulator_config/snobot2017_WithCan.yml";
+            }
+
+            return super.loadConfig(configFile);
+        }
+
+        @Override
+        protected void parseConfig(Object aConfig)
+        {
+            super.parseConfig(aConfig);
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> config = (Map<String, Object>) aConfig;
+
+            boolean simulateCamera = true;
+
+            if (config.containsKey("simulate_camera"))
+            {
+                simulateCamera = (Boolean) config.get("simulate_camera");
+            }
+
+            if (simulateCamera)
+            {
+                CameraSimulator cameraSimulator = new CameraSimulator();
+                // mSimulatorComponenets.add(cameraSimulator);
+            }
+        }
     }
 
     @Override
-    protected void createSimulatorComponents()
+    protected void createSimulatorComponents(String aConfigFile)
     {
-        double drivetrainLoad = .6;
-        // double gearReduction = 1;
-        double drivetrainReduction = 11.43;
-        double drivetrainSpeedLossFactor = .81;
-        double drivetrainWheelDiameter = 6;
-
-        EncoderWrapper leftEncoder = SensorActuatorRegistry.get().getEncoder(PortMappings2017.sLEFT_DRIVE_ENCODER_PORT_A,
-                PortMappings2017.sLEFT_DRIVE_ENCODER_PORT_B);
-        SpeedControllerWrapper leftSC = SensorActuatorRegistry.get().getSpeedControllers().get(PortMappings2017.sDRIVE_PWM_LEFT_A_PORT);
-        DcMotorModel leftMotor = VexMotorFactory.makeCIMMotor();
-        leftMotor = MakeTransmission.makeTransmission(leftMotor, 2, drivetrainReduction, 1.0);
-        leftMotor.setInverted(false);
-        leftSC.setMotorSimulator(new StaticLoadDcMotorSim(leftMotor, drivetrainLoad, drivetrainWheelDiameter / 2 * drivetrainSpeedLossFactor));
-        leftEncoder.setSpeedController(leftSC);
-
-        EncoderWrapper rightEncoder = SensorActuatorRegistry.get().getEncoder(PortMappings2017.sRIGHT_DRIVE_ENCODER_PORT_A,
-                PortMappings2017.sRIGHT_DRIVE_ENCODER_PORT_B);
-        SpeedControllerWrapper rightSC = SensorActuatorRegistry.get().getSpeedControllers().get(PortMappings2017.sDRIVE_PWM_RIGHT_A_PORT);
-        DcMotorModel rightMotor = VexMotorFactory.makeCIMMotor();
-        rightMotor = MakeTransmission.makeTransmission(rightMotor, 2, drivetrainReduction, 1.0);
-        rightMotor.setInverted(true);
-        rightSC.setMotorSimulator(new StaticLoadDcMotorSim(rightMotor, drivetrainLoad, drivetrainWheelDiameter / 2 * drivetrainSpeedLossFactor));
-        rightEncoder.setSpeedController(rightSC);
-        
-        AnalogWrapper gyroWrapper = SensorActuatorRegistry.get().getAnalog().get(100);
-        TankDriveGyroSimulator drivetrainSim = new TankDriveGyroSimulator(leftEncoder, rightEncoder, gyroWrapper);
-        drivetrainSim.setTurnKp(400 / 12.0);
-        mSimulatorComponenets.add(drivetrainSim);
-        
-        if (sSIMULATE_CAMERA)
-        {
-            CameraSimulator cameraSimulator = new CameraSimulator();
-            mSimulatorComponenets.add(cameraSimulator);
-        }
+        new Snobot2017ConfigReader().loadConfig(aConfigFile);
     }
+
 }

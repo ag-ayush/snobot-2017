@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj.tables.ITableListener;
 public class AutonomousFactory
 {
     private static final double sY_START = 336 - 3 * 12;
+    private static final double sX_START_CENTER = 0;
+    private static final double sX_START_BOILER = 67;
+    private static final double sX_START_LOADING = 80;
     
     protected SendableChooser<File> mAutonModeChooser;
     protected SendableChooser<StartingPositions> mPositionChooser;
@@ -30,12 +33,12 @@ public class AutonomousFactory
     
     public enum StartingPositions
     {
-        RedLeft("Red Left",       -Properties2017.sLOADING_X_OFFSET, -sY_START, 0), 
-        RedMiddle("Red Middle",   0,                                 -sY_START, 0), 
-        RedRight("Red Right",     Properties2017.sBOILER_X_OFFSET,   -sY_START, 0), 
-        BlueLeft("Blue Left",     Properties2017.sBOILER_X_OFFSET,   sY_START, 180), 
-        BlueMiddle("Blue Middle", 0,                                 sY_START, 180), 
-        BlueRight("Blue Right",   -Properties2017.sLOADING_X_OFFSET, sY_START, 180), 
+        RedLeft("Red Left", -sX_START_LOADING, -sY_START, 0), 
+        RedMiddle("Red Middle", sX_START_CENTER, -sY_START, 0), 
+        RedRight("Red Right", sX_START_BOILER, -sY_START, 0), 
+        BlueLeft("Blue Left", sX_START_BOILER, sY_START, 180), 
+        BlueMiddle("Blue Middle", sX_START_CENTER, sY_START, 180), 
+        BlueRight("Blue Right", -sX_START_LOADING, sY_START, 180), 
         Origin("Origin", 0, 0, 0);
 
         public final String mDisplayName;
@@ -68,8 +71,10 @@ public class AutonomousFactory
         
         mPositioner = aSnobot.getPositioner();
 
-        mAutonModeChooser = new SnobotAutonCrawler(Properties2017.sAUTON_FILE_FILTER.getValue())
-                .loadAutonFiles(Properties2017.sAUTON_DIRECTORY.getValue() + "/", Properties2017.sAUTON_DEFAULT_FILE.getValue());
+        SnobotAutonCrawler autonCrawler = new SnobotAutonCrawler(Properties2017.sAUTON_FILE_FILTER.getValue());
+        autonCrawler.loadAutonFiles(Properties2017.sAUTON_DIRECTORY.getValue() + "/");
+
+        mAutonModeChooser = autonCrawler.createSendableChooser(Properties2017.sAUTON_DEFAULT_FILE.getValue());
 
         SmartDashboard.putData(SmartDashBoardNames.sAUTON_CHOOSER, mAutonModeChooser);
         
@@ -131,8 +136,8 @@ public class AutonomousFactory
         };
         
         mAutoModeTable.addTableListener(SmartDashBoardNames.sSAVE_AUTON, saveListener, true);
-        mAutonModeChooser.getTable().addTableListener(buildAutonListener);
-        mPositionChooser.getTable().addTableListener(setPositionListener);
+        // mAutonModeChooser.getTable().addTableListener(buildAutonListener);
+        // mPositionChooser.getTable().addTableListener(setPositionListener);
     }
 
     private void setPosition()
