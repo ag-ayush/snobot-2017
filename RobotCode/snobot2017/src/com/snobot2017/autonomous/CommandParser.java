@@ -12,6 +12,7 @@ import com.snobot.lib.motion_profile.PathConfig;
 import com.snobot.lib.motion_profile.PathGenerator;
 import com.snobot.lib.motion_profile.PathSetpoint;
 import com.snobot.lib.motion_profile.StaticSetpointIterator;
+import com.snobot2017.ISnobot2017;
 import com.snobot2017.Properties2017;
 import com.snobot2017.SmartDashBoardNames;
 import com.snobot2017.Snobot2017;
@@ -54,7 +55,7 @@ import edu.wpi.first.wpilibj.tables.ITable;
 public class CommandParser extends ACommandParser
 {
     private static final double sEXPECTED_DT = .02;
-    protected Snobot2017 mSnobot;
+    protected ISnobot2017 mSnobot;
     protected SendableChooser<StartingPositions> mPositionChooser;
     protected ITable mAutonTable;
 
