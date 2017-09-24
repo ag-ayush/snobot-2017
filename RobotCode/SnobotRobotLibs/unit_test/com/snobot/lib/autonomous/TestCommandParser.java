@@ -61,7 +61,7 @@ public class TestCommandParser extends BaseTest
     public void testParseEmptyCommand()
     {
         MockCommandParser parser = new MockCommandParser();
-        Command cmd = parser.readFile("test_inputs/empty.auto");
+        Command cmd = parser.readFile("test_inputs/auton_test/empty.auto");
         Assert.assertNotNull(cmd);
         Assert.assertTrue(parser.wasParsingSuccessful());
     }
@@ -79,7 +79,7 @@ public class TestCommandParser extends BaseTest
     public void testParseTestCommand()
     {
         MockCommandParser parser = new MockCommandParser();
-        Command cmd = parser.readFile("test_inputs/test_auton.auto");
+        Command cmd = parser.readFile("test_inputs/auton_test/test_auton.auto");
         Assert.assertNotNull(cmd);
         Assert.assertTrue(parser.wasParsingSuccessful());
     }
