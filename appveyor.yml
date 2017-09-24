@@ -9,6 +9,7 @@ build_script:
     #dir
     #cmd /c gradlew.bat build
     cd RobotCode/SnobotRobotLibs
+    dir
     cmd /c gradlew.bat build
     
 after_build:
