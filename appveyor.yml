@@ -6,7 +6,7 @@ build_script:
     
     dir
     
-    cmd /c gradlew.bat build
+    cmd /c gradlew.bat build jacocoTestReport
     
 after_build:
 - cmd: "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
