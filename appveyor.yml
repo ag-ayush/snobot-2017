@@ -11,6 +11,7 @@ build_script:
 after_build:
 - cmd: "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
 - cmd: pip install codecov
+- cmd: dir
 - cmd: codecov -f "RobotCode/snobot2017/build/reports/jacoco/test/jacocoTestReport.xml"
 - cmd: codecov -f "RobotCode/SnobotRobotLibs/build/reports/jacoco/test/jacocoTestReport.xml"
 
@@ -20,3 +21,4 @@ artifacts:
   
 - path: Simulator/2017Simulator/build/distributions
   name: SnobotSimulator
+ 
