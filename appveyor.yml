@@ -3,7 +3,9 @@ image: Visual Studio 2015
 build_script:
 - ps: >-
     cd RobotCode/SnobotRobotLibs
+    
     dir
+    
     cmd /c gradlew.bat build
     
 after_build:
