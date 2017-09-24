@@ -23,7 +23,7 @@ sourceSets {
     {
         java
         {
-            srcDirs = ["${rootDir}/src", "${rootDir}/../SnobotRobotLibs/src"]
+            srcDirs = ["${rootDir}/src"]
         }
     }
     
@@ -32,14 +32,6 @@ sourceSets {
         java
         {
             srcDirs = ["${rootDir}/unit_test"]
-        }
-    }
-    
-    simulator
-    {
-        java
-        {
-            srcDirs = ["${rootDir}/simulator"]
         }
     }
 }
@@ -63,9 +55,7 @@ dependencies {
     compile 'edu.wpi.first.ntcore:ntcore-java:' + getNtCoreVersion()
     
     // 3rd Party
-    compile 'com.googlecode.json-simple:json-simple:1.1.1'
     compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/RIOdroid.jar")
-    compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/CTRLib.jar")
     
     // Testing
     testCompile 'junit:junit:4.12'
@@ -75,11 +65,6 @@ dependencies {
     testCompile    'com.snobot.simulator:snobot_sim_gui:'  + getSnobotSimVersion() + ':all'
     testRuntime    'com.snobot.simulator:snobot_sim_java:' + getSnobotSimVersion() + ':uber_native-linux'
     testRuntime    'com.snobot.simulator:snobot_sim_java:' + getSnobotSimVersion() + ':uber_native-windows'
-
-    simulatorCompile sourceSets.main.output
-    simulatorCompile configurations.compile
-    simulatorCompile configurations.testCompile
-    simulatorRuntime configurations.testRuntime
     
     // TODO nice to remove these
     testCompile 'log4j:log4j:1.2.16'
@@ -95,8 +80,6 @@ dependencies {
 
 jar {
     dependsOn { classes }
-    
-    from sourceSets.simulator.output
 }
 
 test.ignoreFailures = true
@@ -110,8 +93,12 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
             fileTree(dir: it,  exclude: 
-                ['com/team254/lib/trajectory/gen/**',
-                 'com/snobot2017/xtrajectory_gen/**'
+                [
+                'com/team254/lib/trajectory/**',
+                'com/snobot/lib/motion_profile/**',
+                'com/snobot/lib/vision/**',
+                'com/snobot/lib/external_connection/**',
+                'com/snobot/lib/adb/**',
                 ])
         })
     }
