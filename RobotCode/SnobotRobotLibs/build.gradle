@@ -55,7 +55,7 @@ dependencies {
     compile 'edu.wpi.first.ntcore:ntcore-java:' + getNtCoreVersion()
     
     // 3rd Party
-    compile files(System.getProperty("user.home") + "/wpilib/user/java/lib/RIOdroid.jar")
+    compile files("3rdPartyLibs/RioDroid.jar")
     
     // Testing
     testCompile 'junit:junit:4.12'
