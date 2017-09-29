@@ -95,8 +95,6 @@ dependencies {
 
 jar {
     dependsOn { classes }
-    
-    from sourceSets.simulator.output
 }
 
 test.ignoreFailures = true
